@@ -1,0 +1,68 @@
+{
+  "name": "elementz",
+  "version": "2.0.0",
+  "description": "A React UI Library for modern and easier development",
+  "main": "lib/elementz.js",
+  "scripts": {
+    "build": "webpack",
+    "dev": "styleguidist server",
+    "build:docs": "styleguidist build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementz-ui/elementz"
+  },
+  "keywords": [
+    "react",
+    "css3",
+    "ui",
+    "framework"
+  ],
+  "author": "elis-k",
+  "license": "AGPL",
+  "bugs": {
+    "url": "https://github.com/elementz-ui/elementz/issues"
+  },
+  "homepage": "https://elementz.style",
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@types/react": "^17.0.8",
+    "@types/react-dom": "^17.0.5",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.2.2",
+    "chart.js": "^3.3.2",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "css-loader": "^5.0.1",
+    "faker": "^5.5.3",
+    "file-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^1.3.3",
+    "react": "^17.0.2",
+    "react-chartjs-2": "^3.0.3",
+    "react-color": "^2.19.3",
+    "react-dom": "^17.0.2",
+    "react-styleguidist": "^11.1.7",
+    "sass": "^1.34.0",
+    "sass-loader": "^10.1.1",
+    "style-loader": "^2.0.0",
+    "terser-webpack-plugin": "^5.1.3",
+    "tinycolor2": "^1.4.2",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.3.2",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.12.3",
+    "webpack-cli": "^4.3.1"
+  },
+  "dependencies": {
+    "history": "^5.0.0",
+    "prop-types": "^15.7.2",
+    "react-select-me": "^1.3.1",
+    "react-virtual": "^2.7.1"
+  }
+}

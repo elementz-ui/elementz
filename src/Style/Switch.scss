@@ -1,0 +1,126 @@
+$themes: secondary, primary, info, warning, danger, success;
+
+.ez-switch {
+	--switch-width: var(--sz-circle);
+	&.sm{
+		height: var(--sz-sm-mini);
+		--switch-width: var(--sz-sm-circle);
+		--switch-text: 6px;
+	}
+	&.md{
+		height: var(--sz-md-mini);
+		--switch-width: var(--sz-md-circle);
+		--switch-text: 8px;	
+	}
+	&.lg{
+		height: var(--sz-lg-mini);
+		--switch-width: var(--sz-lg-circle);
+		--switch-text: 10px;
+	}
+	&.xl{
+		height: var(--sz-xl-mini);
+		--switch-width: var(--sz-xl-circle);
+		--switch-text: 12px;
+	}
+
+	&.auto, &.full{
+		--switch-width: 100%;
+	}
+
+	position: relative;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	background-color: var(--text-x-light);
+	border-radius: var(--border-radius);
+	padding: 3px;
+	width: var(--switch-width);
+	height: var(--sz-mini);
+	min-width: var(--switch-width);
+	box-shadow: inset -1px 1px 4px var(--border), var(--shadow-input);
+	transition: 0.1s background-color;
+	cursor: pointer;
+
+	&.disabled, &[disabled]{
+		pointer-events: initial;
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+	&.loading, &[loading]{
+		cursor: progress;
+	}
+	
+	.ez-switch-text{
+		position: absolute;
+		margin: auto;
+		right: calc(var(--switch-text) - 5px);
+		font-weight: bold;
+    	font-size: var(--switch-text);
+    	text-transform: uppercase;
+		color:  var(--text-light);
+		transition: 0.2s;
+	}
+
+	.ez-switch-track {
+		width: calc((var(--switch-width) / 2) - 3px);
+		height: 100%;
+		border-radius: calc(var(--border-radius) * 0.7);
+		background-color: #fff;
+		margin-left: 0;
+		transition: .3s;
+	}
+	&:not(.active){
+		.ez-switch-track{
+			animation: scalesDuplicate 0.2s cubic-bezier(0.82, 0.44, 0.27, 0.88);
+		}
+	}
+	&.active {
+		.ez-switch-track{
+			margin-left: calc(100% - ((var(--switch-width) / 2) - 3px));
+			animation: scales 0.2s ease-in-out;
+			z-index: 5;
+		}
+		.ez-switch-text{
+			right: unset;
+			z-index: 3;
+			right: calc(100% - var(--switch-text) + 5px);
+			transform: translateX(100%);
+			color: #fff;
+		}
+		background-color: var(--primary);
+	}
+
+	@each $theme in $themes {
+        
+        &.#{$theme}{
+			&.active{
+				background-color: #{"var(--" + $theme + ")"};
+			}
+		}
+
+	}
+}
+
+@keyframes scales {
+	0% {
+		transform: scaleX(1.0);
+	}
+	50% {
+		transform: scaleX(1.45);
+	}
+	100% {
+		transform: scaleX(1.0);
+	}
+}
+
+@keyframes scalesDuplicate {
+	0% {
+		transform: scaleX(1.0);
+	}
+	50% {
+		transform: scaleX(1.45);
+	}
+	100% {
+		transform: scaleX(1.0);
+	}
+}

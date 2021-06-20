@@ -1,0 +1,105 @@
+[class^='rsg--sidebar'] {
+    width: 250px !important;
+    background: var(--background-light) !important;
+	padding: 0px 15px !important;
+	border-color: var(--border) !important;
+}
+
+[class^='rsg--logo']{
+    border-color: var(--border) !important;
+}
+
+[class^='rsg--preview']{
+    border: var(--border-width) solid var(--border) !important;
+    padding: var(--box-padding) !important;
+    box-shadow: var(--shadow) !important;
+    background: var(--background-light) !important;
+}
+
+[class^='rsg--item-']{
+    font-size: 17px !important;
+    margin: 10px 0 !important;
+}
+
+[class^='rsg--item-'] a {
+    color: var(--text) !important;
+}
+
+[class^='rsg--search'] input{
+    background-color: var(--background-input);
+    color: var(--text);
+    border-color: var(--border);
+}
+body.ez-dark [class^='rsg--code']{
+    color: rgba(var(--text-code),.6) !important;
+}
+
+.rsg--button-39{
+	color: rgba(var(--text-code),.6) !important;
+}
+.rsg--button-39:hover, .rsg--button-39:focus {
+    color: var(--text) !important;
+}
+
+.rsg--isActive-40 {
+    border-color: var(--text-light) !important;
+}
+footer[class^='rsg--root'] a {
+    background: var(--text) !important;
+    color: var(--background-light) !important;
+}
+
+img.elementz-img {
+    max-width: 50px;
+    margin-right: 10px;
+    margin-left: -10px;
+}
+
+.elementz-logo {
+    display: flex;
+    font-size: 14px;
+	color: var(--text);
+	align-items: center;
+}
+
+h1, h2, h3, h4, h5, h6, p, li {
+	color: var(--text) !important;
+}
+
+#rsg-root > div{
+	background-color: var(--background);
+}
+
+body.ez-dark #rsg-root > div{
+	background-color: var(--background);
+}
+
+body.ez-dark [class^='rsg--preview']{
+	background:  var(--background-dark);
+}
+
+body.ez-dark article div[class^='rsg--tab'] div div[class^='rsg--root'], body.ez-dark pre.lang-jsx {
+    background-color: #1c1d29;
+    color: var(--text);
+    filter: brightness(1.5);
+}
+
+section + footer{
+    display: none !important;
+}
+
+
+@media (max-width: 768px){
+    .ez-button:not(.noMobile):not(.ez-circle):not(.ez-pg-button):not(.ez-pg-navigate):not(.sm):not(.lg):not(.md):not(.xl){
+        padding: var(--sz-md-padding) calc(var(--sz-md-padding) * 1.5) !important;
+    }
+}
+
+@media (max-width: 1080px){
+    [class^='rsg--sidebar']{
+        display: none;
+    }
+    [class*='rsg--hasSidebar']{
+        padding-left: 0px !important;
+    }
+}

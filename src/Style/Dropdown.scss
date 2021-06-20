@@ -1,0 +1,190 @@
+@import './Effects.scss';
+
+.dropdown {
+    position: relative;
+    width: auto;
+
+    &.sm {
+        .d-body{
+            min-width: 150px;
+        }
+    }
+    &.md {
+        .d-body{
+            min-width: 350px;
+        }
+    }
+    &.lg {
+        .d-body{
+            min-width: 500px;
+        }
+    }
+    &.xl{
+        .d-body{
+            min-width: 750px;
+        }
+    }
+    &.auto, &.full{
+        width: 100%;
+        .d-handle{
+            width: 100%;
+        }
+    }
+
+    .d-handle{
+        width: fit-content;
+        position: relative;
+    }
+    .d-body{
+        position: absolute;
+        padding-top: 30px;
+        top: calc(100% - 5px);
+        left: -500%; //-15px
+        right: -500%;
+        margin: auto;
+        width: fit-content;
+        display: none;
+        animation: .2s dropdownOpen;
+        z-index: 1000;
+    }
+
+
+    .ez-dropdown-arrow{
+        &::before{
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, var(--background-light) 55%, transparent 0%);
+            position: absolute;
+            bottom: -30px;
+            left: calc(50% - 5px);
+            transform: rotate(135deg);
+            opacity: 0;
+            z-index: 999;
+            box-shadow: -2px 2px 6px 1px rgba(0,0,0,0.1);
+            transition: opacity .0s .0s;
+        }
+        &.border{
+            &::before{
+                border-bottom: var(--border-width) solid var(--border);
+                border-left: var(--border-width) solid var(--border);
+                box-shadow: none;
+                z-index: 1001;
+            }
+        }
+    }
+    &.fullLeft{
+        .d-body{
+            left: -100%;
+        }
+        .ez-dropdown-arrow::before{
+            left: calc(25% - 5px);
+        }
+    }
+
+    &.left {
+        .d-body{
+            right: unset;
+            left: 0px;
+        }
+    }
+       
+    &.right{
+        .d-body{
+            left: unset;
+            right: 0px; //-15px;
+        }
+    }
+    &.top{
+        .d-body{
+            padding-top: unset;
+            top: unset;
+            padding-bottom: 30px;
+            bottom: calc(100% - 5px);
+        }
+    }
+    &.open,  &.hover:hover {
+        .ez-dropdown-arrow::before{
+            opacity: 1;
+            transition-delay: .18s;
+        }
+        .d-body {
+            display: block;
+        }
+    }
+    
+}
+
+@media (max-width: 768px){
+    
+    .dropdown {
+        &:not(.noMobile){
+		    .d-handle{
+		    	animation: none !important;
+		    }
+		    .d-body{
+                position: fixed;
+                padding-top: 0px;
+                height: 100%;
+                left: unset;
+                right: 0;
+                z-index: 55555;
+                margin: unset;
+                top: 0;
+                background: var(--background-light);
+                width: 50%;
+                box-shadow: 0 0 18px rgba(0,0,0,0.15);
+                animation: slideleft .1s ease-in-out;
+            }
+
+            &.mobileLeft .d-body{
+                right: unset !important;
+                left: 0;
+                animation: slideright .1s ease-in-out;
+            }
+
+            &.mobileLarge .d-body{
+                width: 80%;
+            }
+        
+	        .d-handle::before{
+		       display: none;
+            }
+        }
+
+        &.sm {
+            .d-body{
+                min-width: 100px;
+            }
+        }
+        &.md {
+            .d-body{
+                min-width: 150px;
+            }
+        }
+        &.lg {
+            .d-body{
+                min-width: 200px;
+            }
+        }
+        &.xl{
+            .d-body{
+                min-width: 250px;
+            }
+        }
+    }
+
+   
+}
+
+
+@keyframes dropdownOpen {
+    0% { transform: scale(1); opacity: 0; }
+    35%{
+        transform: scale(1); opacity: 0;
+    }
+    40%{
+        transform: scale(0);
+    }
+    to { transform: scale(1); opacity: 1;}
+}

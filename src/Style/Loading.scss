@@ -1,0 +1,166 @@
+.loading-elementz {
+
+	&.le-content {
+		.ez-box {
+			border: none !important;
+		}
+		/* Maybe not neccessary to remove borders */
+		* {
+			border: none !important;
+		}
+		.ez-skelet * {
+			transform: scale(0.9); //Fix some elements that still show some overflow even with overflow: hidden
+		}
+		small, b, i, strong {
+			display: inline-flex;
+		}
+		h1, h2, h3, h4, h5, h6, p, small, b, i, strong, big, em, code, sub, sup,
+		a, .ez-skelet {
+			position: relative !important;
+			overflow: hidden;
+			user-select: none !important;
+			&.circle {
+				border-radius: 50%;
+			}
+			&.rounded {
+				border-radius: 10px;
+			}
+			&:after{
+				content: '';
+				background: linear-gradient(95deg, #e5e8e8 25%, #dce1e2 37%, #e5e8e8 63%); //#e3e7e9
+
+    			background-size: 400% 100%;
+				
+				animation: loadingGradient 1.2s cubic-bezier(0.25, 0.1, 0.09, 0.82) infinite;
+				user-select: none;
+				//background: url(../Assets/gradient.svg); //SVG background has smoother & faster animation then CSS animation 
+				//background-position: center;
+				width: 100%  !important;
+				height: 100%  !important;
+				position: absolute  !important;
+				left: 0;
+				bottom: 0;
+				/* Enable hardware acceleration to fix laggy transitions */
+				-webkit-transform: translateZ(0);
+				-moz-transform: translateZ(0);
+				-ms-transform: translateZ(0);
+				-o-transform: translateZ(0);
+				transform: translateZ(0);
+				border-radius: 0.25rem;
+				
+			}
+			
+
+		}
+		h1, h2, h3, h4, h5, h6 {
+			width: fit-content !important;
+		}
+		
+	}
+	&.le-circle{
+		pointer-events: none;
+		border-radius: 50%;
+		border: 2px solid rgba(var(--text-code),0.05);
+		border-left: 2px solid var(--primary);
+		width: 20px;
+		height: 20px;
+		opacity: .5 !important;
+		cursor: progress;
+		transform: rotate(0deg);
+		animation: rotate .8s infinite linear;
+		
+
+		&.absolute {
+			position: absolute;
+			top: 0;
+			left:0;
+			right:0;
+			bottom: 0;
+			margin: auto;
+		}
+
+		&.primary {
+			border-left-color: var(--primary);
+		}
+		&.secondary {
+			border-left-color: var(--secondary);
+		}
+		&.danger {
+			border-left-color: var(--danger);
+		}
+		&.success {
+			border-left-color: var(--success);
+		}
+		&.warning {
+			border-left-color: var(--warning);
+		}
+		&.info {
+			border-left-color: var(--info);
+		}
+
+		&.md{
+			border-width: 3px;
+			width: 32px;
+			height: 32px;
+		}
+
+		&.lg{
+			border-width: 4px;
+			width: 64px;
+			height: 64px;
+		}
+
+		&.xl{
+			border-width: 6px;
+			width: 128px;
+			height: 128px;
+		}
+	}
+}
+// Dark
+body.ez-dark  {
+	.loading-elementz{
+
+	&.le-content{
+		h1, h2, h3, h4, h5, h6, p, small, b, i, strong, big, em, code, sub, sup,
+			a, .ez-skelet {
+				&:after{
+					background: linear-gradient(95deg, #2c2c35 25%, #30303a 37%, #2c2c35 63%);
+					background-size: 400% 100%;
+				}
+		}
+
+	}
+	&.le-circle{
+		&.primary {
+			border-left-color: var(--primary-light);
+		}
+		&.secondary {
+			border-left-color: var(--secondary-light);
+		}
+		&.danger {
+			border-left-color: var(--danger-light);
+		}
+		&.success {
+			border-left-color: var(--success-light);
+		}
+		&.warning {
+			border-left-color: var(--warning-light);
+		}
+		&.info {
+			border-left-color: var(--info-light);
+		}
+	}
+	}
+	
+
+}
+@keyframes loadingGradient {
+	0%{	
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0 50%;
+	}
+   
+  }

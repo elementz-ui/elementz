@@ -1,0 +1,545 @@
+$themes: secondary, primary, info, warning, danger, success;
+
+.ez-button {
+    font-family: var(--font-family);
+    text-align: center;
+    cursor: pointer;
+    line-height: normal;
+    user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    transform: scale(1);
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.05);
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color .35s cubic-bezier(0.645, 0.045, 0.355, 1), transform .35s ease-in-out;
+
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--border-radius);
+
+    background-color: var(--background-input);
+    color: var(--text);
+
+    padding: var(--sz-padding) calc(var(--sz-padding) * 2);
+    font-size: var(--sz-font);
+
+    box-shadow: var(--shadow-input);
+
+    i{
+        margin: 0 auto;
+        font-size: var(--sz-icon-font);
+        transition: transform .25s ease-in-out;
+        margin-top: -2px;
+        display: inline-block;
+        margin-bottom: -2px;
+    }
+
+	&:hover {
+        box-shadow: inset 0 0 0 50px rgba(var(--text-code),0.05);
+    }
+    &.active {
+        box-shadow: inset 0 0 0 50px rgba(var(--text-code),0.05);
+        border: var(--border-width) solid rgba(var(--text-code),0.25);
+    }
+    
+
+	
+    &.sz-auto{
+        font-size: inherit;
+    }
+
+    @each $theme in $themes {
+        
+        &.#{$theme}{
+            background: var(#{"--" + $theme});
+            color: #fff;
+            position: relative;
+            &.active{
+                box-shadow: inset 0 0 0 2px #{"var(--" + $theme + "-light)"};
+                text-shadow: 0px 0px 15px #fff;
+                border-width: 0px;
+            }
+            &:active{
+                box-shadow: inset -1px -20px 20px rgba(0,0,0,0.1);
+            }
+            &.animate {
+                &::before{
+                    content: '';
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    left: 0;
+                    margin: 0px;
+                    border-radius: inherit;
+                    border: 0px solid #{"rgba(var(--" + $theme + "-code),0.45)"};
+                    position: absolute;
+                    z-index: -1 !important;
+                    animation: buttonActive 0.8s cubic-bezier(0.18, 0.51, 0.43, 0.88), fade 0.8s;
+                    animation-delay: 0s, 0.05;
+                }
+            }
+            
+        }   
+    }
+    
+    &.gradient {
+        &.animate::before{
+            animation: buttonGradientActive 0.8s cubic-bezier(0.18, 0.51, 0.43, 0.88), fade 0.8s;
+        }
+
+        @each $theme in $themes {
+            &.#{$theme}{
+                color: #fff;
+                @if $theme != 'warning'{
+                    background: var(#{"--" + $theme}) linear-gradient(45deg, var(#{"--" + $theme}), var(#{"--" + $theme + "-dark"}));
+                    
+                    &::before{
+                        margin: 4px;
+                        background: var(#{"--" + $theme}) linear-gradient(45deg, var(#{"--" + $theme}), var(#{"--" + $theme + "-dark"}));
+                        filter: blur(5px);
+                        border: none !important;
+                    }
+                }
+                @else {
+                    background: var(#{"--" + $theme}) linear-gradient(45deg, var(#{"--" + $theme}), var(--danger-light));
+                    
+                    &::before{
+                        margin: 4px;
+                        background: var(#{"--" + $theme}) linear-gradient(45deg, var(#{"--" + $theme}), var(--danger-light));
+                        filter: blur(5px);
+                        border: none !important;
+                    }
+                }
+            }
+            
+        }
+
+
+        
+        &.primary.secondary{
+            color: #fff;
+            background: var(--primary) linear-gradient(45deg, var(--primary), var(--secondary));
+            &::before{
+                margin: 4px;
+                background: var(--primary) linear-gradient(45deg, var(--primary), var(--secondary));
+                border: none !important;
+            }
+        }
+
+        &.primary.secondary{
+            color: #fff;
+            background: var(--primary) linear-gradient(45deg, var(--primary), var(--secondary));
+            &::before{
+                margin: 4px;
+                background: var(--primary) linear-gradient(45deg, var(--primary), var(--secondary));
+                border: none !important;
+            }
+        }
+        
+        border-color: transparent !important;
+        background-origin: border-box !important;
+        
+
+        &.rainbow {
+            color: #fff;
+            background: linear-gradient(30deg, 
+                #23ff71 11%, 
+                #19cfd8 29%, 
+                var(--info) 59%, 
+                var(--purple) 81%
+            );
+            border-color: transparent;
+            background-origin: border-box;
+            &.animate{
+                &::before{
+                    content: '';
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    left: 0;
+                    margin: 4px;
+                    position: absolute;
+                    z-index: -1;
+                    border-radius: inherit;
+
+                    background: linear-gradient(30deg, 
+                        #23ff71 11%, 
+                        #19cfd8 29%, 
+                        var(--info) 59%, 
+                        var(--purple) 81%
+                    );
+                    filter: blur(5px);
+                    
+                    animation: buttonGradientActive 0.8s cubic-bezier(0.18, 0.51, 0.43, 0.88), fade 0.8s;
+                    animation-delay: 0s, 0.05;
+                }
+            }
+        }
+        
+    }
+
+    &.reverse, &.cancel {
+        border-color: transparent;
+        background: var(--background);
+        &:not(.transparent)::before{
+            display: none !important;
+            animation: none !important;
+        }
+        @each $theme in $themes {
+            &.#{$theme}{
+                color: var(#{"--" + $theme});
+                background-color: #{"rgba(var(--" + $theme + "-code),0.1)"};
+                box-shadow: 1px 0px 0px -2px #{"rgba(var(--" + $theme + "-code),0.5)"};
+                transition: .15s ease;
+                &:active {
+                    box-shadow: 0px 1px 2px 0px #{"rgba(var(--" + $theme + "-code),0.5)"};
+                }
+                &:hover{
+                    background-color: #{"rgba(var(--" + $theme + "-code),0.15)"};
+                }
+                &.active{
+                    box-shadow: inset 0 0 0 2px #{"var(--" + $theme + ")"};
+                }
+            }   
+        }
+        
+
+        &.transparent {
+            position: relative;
+            mix-blend-mode: screen;
+            background: none;
+            border:none;
+            color:black;
+            &:before {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background-color: white;
+                border-radius: inherit;
+                content: '';
+                mix-blend-mode: color-burn;
+                transition: .5s cubic-bezier(0.39, 0.575, 0.565, 1);
+            }
+            &:active{
+                background-color: rgba(255, 255, 255, 0.7);
+                &:before{
+                    background-color: rgba(255, 255, 255, 0.7);
+                }
+            }
+        }
+
+        
+    }
+
+    
+    &.transparent:not(.reverse):not(.cancel) {
+        &::before{
+            display: none;
+            animation: none;
+        }
+        background-color: transparent;
+        border: 2px solid #fff;
+        color: #fff;
+        &.dark{
+            border: 2px solid var(--text);
+            color: var(--text);
+            i{
+                font-weight: bold;
+            }
+            &:hover,&:active{
+                background-color: rgba(0,0,0,0.1);
+            }
+        }
+        &:hover,&:active{
+            background-color: rgba(255,255,255,0.15);
+        }
+    }
+
+    &.semi-transparent {
+        &::before{
+            display: none;
+            animation: none;
+        }
+        background: rgba(255,255,255,0.35);
+        border: none;
+        color: #fff;
+        &:hover,&:active{
+            background-color: rgba(255,255,255,0.5);
+        }
+    }
+
+
+    &.simple{
+        color: var(--text);
+        border: transparent;
+        background: transparent;
+        opacity: .65;
+        box-shadow: none;
+        &:hover, .active {
+            opacity: 1;
+        }
+        
+        &.active{
+            font-weight: bold;
+        }
+    }
+
+    &.rounded, &.round{
+        border-radius: 1rem; 
+    }
+   
+    &.hasIcon:not(.ez-circle) {
+       
+        i {
+            position: absolute;
+            left: calc(var(--sz-padding) / 1.45);
+            top: 0;
+            bottom: 0;
+            height: fit-content;
+            margin: auto;
+            &.icon-20{
+                font-size: 20px;
+            }
+            &.icon-25{
+                font-size: 25px;
+            }
+            &.icon-30{
+                font-size: 30px;
+            }
+            &.icon-bold{
+                font-weight: bold;
+            }
+        }
+        &.iconRight {
+
+            i {
+                left: initial;
+                right: calc(var(--sz-padding) / 1.45);
+            }
+        }
+        &.sm{
+            i {
+                left: calc(var(--sz-sm-padding) / 1.45);
+            }
+            &.iconRight{
+                i {
+                    left: initial;
+                    right: calc(var(--sz-sm-padding) / 1.45);
+                }
+            }
+        }
+        &.md{
+            i {
+                left: calc(var(--sz-md-padding) / 1.45);
+            }
+            &.iconRight{
+                i {
+                    left: initial;
+                    right: calc(var(--sz-sm-padding) / 1.45);
+                }
+            }
+        }
+        &.lg{
+            i {
+                left: calc(var(--sz-lg-padding) / 1.45);
+            }
+            &.iconRight{
+                i {
+                    left: initial;
+                    right: calc(var(--sz-sm-padding) / 1.45);
+                }
+            }
+        }
+        &.xl{
+            i {
+                left: calc(var(--sz-xl-padding) / 1.45);
+            }
+            &.iconRight{
+                i {
+                    left: initial;
+                    right: calc(var(--sz-sm-padding) / 1.45);
+                }
+            }
+        }
+    }
+    
+    &.ez-circle{
+        i {
+            margin-bottom: 0px;
+            margin-top: 0px;
+        }
+    }
+  
+
+   
+    &.disabled,&[disabled]{
+		opacity: .6;
+        cursor: not-allowed;
+        font-weight: normal;
+        pointer-events: initial;
+        border: var(--border-width) solid var(--border);
+        user-select: none;
+    }
+   
+    &[loading],&.loading{
+        transition: none;
+        color: transparent !important;
+		position: relative;
+        cursor: progress;
+        user-select: none;
+    }
+
+    &[loading]:after,&.loading:after {
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        top: 50%;
+        left:0;
+        right: 0;
+        margin: 0 auto;
+        transform: translateY(-50%) ;
+        animation: buttonLoad 1s infinite ease-in-out;
+    }
+
+    .count{
+        border-radius: 50%;
+        width: 15px;
+        height: 15px;
+        background: var(--red-light);
+        position: absolute;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        justify-content: center;
+        top: 0px;
+        right: 0px;
+        transform: translate(30%, 30%);
+    }
+
+    &.sm{
+        padding: var(--sz-sm-padding) calc(var(--sz-sm-padding) * 2);
+    }
+    &.md{
+        padding: var(--sz-md-padding) calc(var(--sz-md-padding) * 1.5);
+    }
+    &.lg{
+        padding: var(--sz-lg-padding) calc(var(--sz-lg-padding) * 1.5);
+    }
+    &.xl{
+        padding: var(--sz-xl-padding) calc(var(--sz-xl-padding) * 1.5);
+    }
+
+
+
+    
+}
+
+
+body.ez-dark {
+    .ez-button{
+        @each $theme in $themes {
+            &.#{$theme}.animate::before{
+                border-color: #{"rgba(var(--" + $theme + "-code),0.8)"};  
+            }
+        }
+        &.reverse, &.cancel {
+            @each $theme in $themes {
+                &.#{$theme}{
+                    color: var(#{"--" + $theme + "-light"});
+                    border: var(--border-width) solid var(#{"--" + $theme});
+                }
+            }
+        }
+    }
+}
+
+@keyframes buttonActive {
+    100% {
+        border-width: 6px;
+        margin: -8px;
+    }
+}
+
+@keyframes buttonGradientActive {
+    100% {
+        border-width: 6px;
+        margin: -12px;
+    }
+}
+
+
+@keyframes buttonReverseActive {
+    100% {
+        border-width: 6px;
+        margin: -8px;
+    }
+}
+
+@media (min-width: 768px){
+    .ez-button{
+        &.hasIcon{
+             &:not(.iconRight){
+                 padding-left: calc(10px + (var(--sz-padding) * 2));
+             }
+             &.iconRight {
+                 padding-right: calc(10px + (var(--sz-padding) * 2));
+             }
+             &.lg{
+                 &:not(.ez-circle):not(.iconRight){
+                     padding-left: 50px;
+                 }
+                 &:not(.ez-circle).iconRight{
+                     padding-right: 50px;
+                 }
+             }
+             &.xl{
+                 &:not(.ez-circle){
+                     padding-left: 55px;
+                 }
+                 &:not(.ez-circle).iconRight{
+                     padding-right: 55px;
+                 }
+             }
+        }
+    }
+}
+@media (max-width: 768px){
+    .ez-button:not(.noMobile) {
+        &:not(.sm):not(.lg):not(.md):not(.xl) {
+            padding: var(--sz-sm-padding) calc(var(--sz-sm-padding) * 1.5);
+        }
+		&.hasIcon {
+			font-size: 0px !important;
+			i {
+                font-size: var(--sz-font) !important;
+				position: static !important;
+				margin: initial !important;
+				font-weight: bold;
+                //transform: none;
+                padding-top: 2px;
+                padding-bottom: 3px;
+			}
+        }
+        &.sm.hasIcon i{
+            font-size: var(--sz-sm-font)  !important;
+        }
+        &.md.hasIcon i{
+            font-size: var(--sz-md-font)  !important;
+        }
+        &.lg.hasIcon i{
+            font-size: var(--sz-lg-font)  !important;
+        }
+        &.xl.hasIcon i{
+            font-size: var(--sz-xl-font)  !important;
+        }
+    }
+}
