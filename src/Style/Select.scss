@@ -167,6 +167,8 @@ $sizes: sm, md, lg, xl;
 		border-radius: var(--border-radius);
 		box-shadow: var(--shadow);
 		will-change: transform;
+		height: -moz-fit-content;
+    	height: -webkit-fit-content;
 		height: fit-content !important;
 		max-height: 250px !important;
 		animation: .15s slidedown cubic-bezier(0.21, 1.13, 0.56, 0.91);

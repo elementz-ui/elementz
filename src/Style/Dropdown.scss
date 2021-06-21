@@ -32,6 +32,8 @@
     }
 
     .d-handle{
+        width: -moz-fit-content;
+        width: -webkit-fit-content;
         width: fit-content;
         position: relative;
     }
@@ -41,8 +43,10 @@
         top: calc(100% - 5px);
         left: -500%; //-15px
         right: -500%;
-        margin: auto;
+        width: -moz-fit-content;
+        width: -webkit-fit-content;
         width: fit-content;
+        margin: auto;
         display: none;
         animation: .2s dropdownOpen;
         z-index: 1000;

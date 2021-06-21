@@ -746,14 +746,13 @@ ThemeMaker.MultiplePixelPicker = ({ variable, variables, setVariables, fields })
 		hasFields = fields && Array.isArray(fields) && fields.length,
 		fieldsLength = hasFields ? fields.length : 4,
 		isValidValue = ThemeMaker.isValidPixelInput(value, fieldsLength),
-		fieldValues = isValidValue ?
+		fieldValues = typeof value === "string" && typeof value.matchAll === "function" && isValidValue ?
 			Array.from(value.matchAll(new RegExp(isValidValue, "g")))[0].slice(1).map(
 				(e) => (e.replace(/[^\d.]+/g, ''))
 			) :
 			Array.from(Array(fieldsLength).keys()).map(
 				() => (0)
 			);
-	console.log(value, fieldValues);
 	const sliderPicker = hasFields ? (
 		(
 			<Dropdown noMobile left disabled={invalid} handle={

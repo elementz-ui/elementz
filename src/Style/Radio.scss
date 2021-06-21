@@ -3,13 +3,14 @@ $themes: secondary, primary, info, warning, danger, success;
 
 .ez-radio-bar{
     border-radius: 15px;
-    width: fit-content;
     background: var(--primary);
     color: var(--primary);
     justify-content: space-between;
     display: flex;
     align-self: center;
     width: 100%;
+    max-width: -moz-fit-content;
+    max-width: -webkit-fit-content;
     max-width: fit-content;
     box-shadow: var(--shadow-input);
     

@@ -82,6 +82,8 @@ select.ez-input{
         background: var(--background-input);
         box-shadow: var(--shadow-input);
         transition: .35s border;
+        width: -moz-fit-content;
+        width: -webkit-fit-content;
         width: fit-content;
 
         &.auto, &.full{
@@ -150,6 +152,8 @@ select.ez-input{
         cursor: pointer;
         input[type='file'] {
             position: absolute;
+            width: -moz-fit-content;
+            width: -webkit-fit-content;
             width: fit-content;
             opacity: 0;
             top: -99999px;
@@ -359,6 +363,8 @@ select.ez-input{
             text-align: center;
             min-width: 70px;
         }
+        width: -moz-fit-content;
+        width: -webkit-fit-content;
         width: fit-content;
     }
 

@@ -1,6 +1,5 @@
 
-<img src='https://elementz.style/elementz.png'>
-:zap: A React Component library for buliding modern applications easily & quickly.
+A React Component library for buliding modern applications easily & quickly.
 
 ### Get started
 Install with NPM

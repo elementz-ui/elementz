@@ -297,10 +297,6 @@ $themes: secondary, primary, info, warning, danger, success;
         i {
             position: absolute;
             left: calc(var(--sz-padding) / 1.45);
-            top: 0;
-            bottom: 0;
-            height: fit-content;
-            margin: auto;
             &.icon-20{
                 font-size: 20px;
             }

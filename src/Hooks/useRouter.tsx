@@ -160,13 +160,13 @@ function useRouter(routes: Map<String,{
 
 
 		if (!hasRedirection) {
-			console.log("Changing route state", history.location.pathname, currentRoute, routes);
+			//console.log("Changing route state", history.location.pathname, currentRoute, routes);
 			setActivePage([currentRoute, 'push', false]);
 			historyChange.current = true;
 		}
 		
 		if (hasRedirection && routes[hasRedirection]) {
-			console.log("Setting history", routes[hasRedirection].path)
+			//console.log("Setting history", routes[hasRedirection].path)
 			history[redirectionMethod](routes[hasRedirection].path, redirectionState);
 		}
 		
@@ -175,11 +175,11 @@ function useRouter(routes: Map<String,{
 	//Update location on state change
 	useEffect(() => {
 		if (historyChange.current) {
-			console.log("History changed");
+			//console.log("History changed");
 			historyChange.current = false;
 		} else {
 			var [name, historyMethod, historyState] = Array.isArray(activePage) ? [activePage[0], activePage[1], activePage[2]] : [activePage];
-			console.log(activePage, [name, historyMethod, historyState])
+			//console.log(activePage, [name, historyMethod, historyState])
 			routeRedirect(name, routes[name], historyMethod, historyState);
 		}
 
