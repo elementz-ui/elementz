@@ -4,62 +4,83 @@
   https://github.com/elementz-ui/elementz
 */
 
-import React from 'react';
-
-
-
-import './Assets/ezTheme'; 
+import './Assets/ezTheme';
 
 /**
  * Components
  */
+//import Flag from 'Components/Flag'; Too big size, better imported by cherrypick
+import { Row, Col } from './Components/Bootstrap';
 import Alert from './Components/Alert';
-import Button from './Components/Button';
 import Badge from './Components/Badge';
+import Box from './Components/Box';
+import Button from './Components/Button';
 import Dropdown from './Components/Dropdown';
+import Group from './Components/Group';
 import Icon from './Components/Icon';
-//import Flag from './Components/Flag'; Too big size, better imported by cherrypick
-import Input from './Components/Input'; 
-import Loading from './Components/Loading'; 
+import Input from './Components/Input';
+import Loading from './Components/Loading';
 import Menu from './Components/Menu';
 import Modal from './Components/Modal';
 import Nav from './Components/Nav';
-import Box from './Components/Box';
 import Progress from './Components/Progress';
 import Radio from './Components/Radio';
 import Select from './Components/Select';
 import Switch from './Components/Switch';
-import Group from './Components/Group';
 import Table from './Components/Table';
-import {Row, Col} from './Components/Bootstrap';
 
 /**
  * Hooks
  */
-import useLocalStorage from './Hooks/useLocalStorage';
-import useModal from './Hooks/useModal';
-import useOutside from './Hooks/useOutside';
-import usePrevious from './Hooks/usePrevious';
-import useScript from './Hooks/useScript';
-import useMultiState from './Hooks/useMultiState';
-import useComponentWillMount from './Hooks/useComponentWillMount';
 import { RouterProvider, useRouter, useHistory } from './Hooks/useRouter';
 import { useThemeDarkMode, useThemeSize } from './Hooks/useTheme';
 import getHistory from './Hooks/getHistory';
-
+import useComponentWillMount from './Hooks/useComponentWillMount';
+import useLocalStorage from './Hooks/useLocalStorage';
+import useModal from './Hooks/useModal';
+import useMultiState from './Hooks/useMultiState';
+import useOutside from './Hooks/useOutside';
+import usePrevious from './Hooks/usePrevious';
+import useScript from './Hooks/useScript';
 
 /**
  * CSS
  */
-import './Style/Theme.scss';
-import './Style/Main.scss';
 import './Style/Effects.scss';
-
+import './Style/Main.scss';
+import './Style/Theme.scss';
 
 export {
-	Menu, Modal, Dropdown, Button, Input, Radio, Table, Group, Switch,
-	Loading, Icon, Nav, Select, Alert, Progress, Box, Badge, Row, Col,
-	useLocalStorage, useModal, usePrevious, useScript, useOutside,	useMultiState,
-	useComponentWillMount, useRouter, useHistory, RouterProvider, getHistory,
-	useThemeDarkMode, useThemeSize
-}
+  Alert,
+  Badge,
+  Box,
+  Button,
+  Col,
+  Dropdown,
+  getHistory,
+  Group,
+  Icon,
+  Input,
+  Loading,
+  Menu,
+  Modal,
+  Nav,
+  Progress,
+  Radio,
+  RouterProvider,
+  Row,
+  Select,
+  Switch,
+  Table,
+  useComponentWillMount,
+  useHistory,
+  useLocalStorage,
+  useModal,
+  useMultiState,
+  useOutside,
+  usePrevious,
+  useRouter,
+  useScript,
+  useThemeDarkMode,
+  useThemeSize,
+};

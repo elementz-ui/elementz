@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "./lib/",
-    "noImplicitAny": false,
-    "module": "es6",
-    "target": "es5",
-    "jsx": "react",
     "allowJs": true,
-   "allowSyntheticDefaultImports": true,
-   "esModuleInterop" : true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "module": "es6",
+    "noImplicitAny": false,
+    "outDir": "./lib/",
+    "target": "es5"
   }
 }
