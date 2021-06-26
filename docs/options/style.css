@@ -95,7 +95,7 @@ section + footer{
     }
 }
 
-@media (max-width: 1080px){
+@media (max-width: 1279px){
     [class^='rsg--sidebar']{
         display: none;
     }

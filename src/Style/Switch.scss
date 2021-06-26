@@ -29,6 +29,7 @@ $themes: secondary, primary, info, warning, danger, success;
 
 	position: relative;
 	display: flex;
+	user-select: none;
 	justify-content: flex-start;
 	align-items: center;
 	background-color: var(--text-x-light);

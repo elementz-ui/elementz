@@ -40,8 +40,6 @@ const TableFilter = function (props) {
 
 	
 	const handleValueChange = function (e) {
-		console.log("Change", e);
-		
 		const isNative = e && e.target;
 
 		var value = isNative ? e.target.value : e;
@@ -108,7 +106,6 @@ const TableFilter = function (props) {
 			className="ez-filter-keys"
 			secondary
 			onChange={(e) => {
-				console.log(e);
 				setFilterState({
 					key: e,
 					value: null,
@@ -432,6 +429,13 @@ function Table(props) {
 	const scrollingRef = useRef();
 
 	const [scrollFinish, setScrollFinish] = useState(true);
+	
+	const [horizontalScrolling, setHorizontalScrolling] = useState({
+		scrolling: false,
+		end: false
+	});
+
+	const [horizontalOverflow, setHorizontalOverflow] = useState(null);
 
 	const rowHeight = useRef({});
 
@@ -459,7 +463,8 @@ function Table(props) {
 		hasBeforeColumn = (options.selectable || options.expandable),
 		hasAfterColumn = (options.onAction),
 		colSpan = columns_keys.length + (hasBeforeColumn ? 1 : 0) + (hasAfterColumn ? 1 : 0),
-		isCustom = mobile && typeof options.onMobile === "function";
+		isCustom = mobile && typeof options.onMobile === "function",
+		hasActions = (options.selectable && selected.length);
 
 	
 	const ParseData = useMemo(() => {
@@ -831,7 +836,7 @@ function Table(props) {
 
 	useEffect(() => {
 		setSelected([]);
-	}, [options.data, options.scrollable]);
+	}, [data, options.data, options.scrollable]);
 
 	useEffect(() => {
 		if(isRemote && scroll) {
@@ -919,12 +924,8 @@ function Table(props) {
 	
 	useEffect(() => {
 		const handleResize = function (e) {
-			if(window.innerWidth <= 1080) {
-				setMobile(true);
-			}
-			else {
-				setMobile(false);
-			}
+			setMobile((window.innerWidth <= 1080));
+			setHorizontalOverflow((tableContainer.current && tableContainer.current.scrollWidth > tableContainer.current.clientWidth));
 		};
 		window.addEventListener('resize', handleResize);
 		return () => {
@@ -1020,10 +1021,24 @@ function Table(props) {
 	}, isRemote ? 500 : 1);
 
 	const handleScroll = function (e) {
+		var _horizontalScrolling = {
+			scrolling: false,
+			end: false
+		}
+
+		if(e.currentTarget.scrollLeft > 0) {
+			_horizontalScrolling.scrolling = true;
+		}
+		if(e.currentTarget.scrollLeft + e.currentTarget.offsetWidth >= e.currentTarget.scrollWidth) {
+			_horizontalScrolling.end = true;
+		}
+
+		setHorizontalScrolling(_horizontalScrolling);
+
 		if(!scroll) {
 			return false;
 		}
-
+		
 		const scrollHeight = isNaN(parseInt(scroll)) ? 100 : parseInt(scroll);
 
 		if(!scrollFinish && e.currentTarget && ((e.currentTarget.scrollTop + e.currentTarget.clientHeight + scrollHeight)  >= e.currentTarget.scrollHeight)) {
@@ -1217,8 +1232,6 @@ function Table(props) {
 
 	const renderColumns = function () {
 		
-		const hasActions = (options.selectable && selected.length);
-
 		const mainClassname = classNames(
 			"ez-columns",
 			{
@@ -1229,7 +1242,7 @@ function Table(props) {
 		return (
 			<>
 				{
-					hasActions ?
+					false ?
 						(
 							<tr className='ez-bulk-actions-row'>
 								<td colSpan={colSpan}>
@@ -1478,9 +1491,11 @@ function Table(props) {
 		estimateSize: useCallback(
 			(i) => {
 				var height = scrollRowHeight || ((rowHeights[data_index] && rowHeights[data_index].items[i]) ? rowHeights[data_index].items[i] : defaultScrollRowHeight);
+				/*
 				if(height !== 50) {
 					console.log(height, i)
 				}
+				*/
 				return height;
 			},
 			[rowHeights, data_index, options.scrollRowHeight],
@@ -1561,7 +1576,10 @@ function Table(props) {
 		"ez-table-custom": isCustom,
 		"ez-table-action-hidden": options.actionHidden,
 		"ez-has-filtering": options.filterable,
-		"ez-has-searching": options.searchable
+		"ez-has-searching": options.searchable,
+		"ez-overflow-horizontal": horizontalOverflow || (tableContainer.current && tableContainer.current.scrollWidth > tableContainer.current.clientWidth),
+		"ez-scrolling-horizontal": horizontalScrolling.scrolling,
+		"ez-scrolling-horizontal-end": horizontalScrolling.end,
 	});
 
 	return (
@@ -1638,6 +1656,11 @@ function Table(props) {
 				}
 				onScroll={handleScroll}
 			>
+				{hasActions ? (
+					<div className='ez-bulk-actions-row'>
+						{bulkActions}
+					</div>
+				) : null}
 				<div
 					className={'ez-table-inner-container'}
 					style={scroll && paginated && paginated.length ? {

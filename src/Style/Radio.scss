@@ -3,6 +3,7 @@ $themes: secondary, primary, info, warning, danger, success;
 
 .ez-radio-bar{
     border-radius: 15px;
+    user-select: none;
     background: var(--primary);
     color: var(--primary);
     justify-content: space-between;
@@ -61,7 +62,7 @@ $themes: secondary, primary, info, warning, danger, success;
       opacity: 0.7;
       white-space: nowrap;
       color: #fff;
-
+      user-select: none;
       &.active{
         background: #fff;
         opacity: 1;

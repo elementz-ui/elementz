@@ -4,3 +4,6 @@ styleguide.config.js
 .babelrc
 webpack.config.js
 styleguide/
+package-lock.json
+yarn-error.log
+yarn.lock

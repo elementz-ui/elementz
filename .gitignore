@@ -1,3 +1,6 @@
 node_modules/
 lib/
 styleguide/
+package-lock.json
+yarn-error.log
+yarn.lock

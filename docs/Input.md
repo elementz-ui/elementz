@@ -11,7 +11,7 @@ import {Input} from 'elementz';
 ```
 
 ### Number
-I challange you to try and type any character other than an number
+I challenge you to type any character other than a number
 
 ```js
 import {Input, Badge} from 'elementz';

@@ -304,7 +304,7 @@ const options = {
 					type: 'pixel'
 				},
 				'icon-font': {
-					title: 'Text Font Size',
+					title: 'Icon Font Size',
 					type: 'pixel'
 				},
 				width: {
@@ -769,7 +769,6 @@ ThemeMaker.MultiplePixelPicker = ({ variable, variables, setVariables, fields })
 										onChange={(e) => {
 											var copyArray = fieldValues.slice();
 											copyArray[i] = e.target.value;
-											console.log(copyArray, copyArray[i])
 											setVariables({
 												[pixels]: copyArray.join('px ') + 'px'
 											})
