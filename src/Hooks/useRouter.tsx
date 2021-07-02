@@ -22,7 +22,8 @@ import getHistory from './getHistory';
  * 			"exact": true
  * 		}
  * }
- * @param {Object} routes 
+ * 
+ * @param {Object} routes - Route schema | Important: Must be memoized
  * @param {string} defaultRoute 
  * @returns [activeRoute, setActiveRoute, Page]
  */

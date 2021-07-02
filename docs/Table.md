@@ -20,6 +20,8 @@ const [config, setConfig] = useMultiState({
 	loading: false,
 });
 
+const [selected, setSelected] = useState([]);
+
 const generated = TableDemoData();
 
 const data = useMemo( ()=>(generated.slice(0,config.rows)), [generated, config.rows]);
@@ -36,7 +38,7 @@ const columns = {
 	},
 	last: {
 		title: 'Last Name',
-		onRender: (last)=>(
+		onRender: (last, row, i)=>(
 			<div onClick={Alert.bind(null,`You clicked Mrs.${last}`)}>
 				{last}
 			</div>
@@ -47,7 +49,7 @@ const columns = {
 	},
 	country: {
 		title: 'Country',
-		onRender: (iso)=>(
+		onRender: (iso, row, i)=>(
 			<Flag iso={iso} title={iso}/>
 		)
 	},	
@@ -63,17 +65,20 @@ const columns = {
 	},
 };
 
+const memoizedColumns = useMemo(() => (columns), []);
+
 <>
 	<TableDemoOptions config={config} setConfig={setConfig} />
 
 	<Table 
-		columns={columns}
+		columns={memoizedColumns}
 		data={config.empty ? [] : data}
 		sortable={config.sortable}
 		searchable={config.searchable}
 		filterable={config.filterable}
 		selectable={config.selectable}
 		paginate={!config.scrollable}
+		
 		limit={5}
 		scrollable={config.scrollable ? '500px' : false}
 		

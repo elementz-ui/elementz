@@ -16,14 +16,13 @@ function Box(props) {
 		"ez-box",
 		{
 			"ez-outside-header": props.title,
-			"ez-box-full": !(props.auto || props.noFull),
+			"full": props.full, //Full Height
 			"center": props.center,
 			"circle": props.circle,
 			'sm': props.sm || props.small,
 			'md': props.md || props.medium,
 			'lg': props.lg || props.large,
 			'xl': props.xl || props.xlarge,
-			'auto': props.auto,
 			'no-shadow': props.noShadow,
 			'no-border': props.noBorder
 		},
@@ -61,5 +60,9 @@ function Box(props) {
 
 	);
 }
+
+Box.defaultProps = {
+	full: true
+};
 
 export default Box;

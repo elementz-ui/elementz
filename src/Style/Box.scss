@@ -42,6 +42,14 @@
     &.circle{
         border-radius: 50%;
     }
+
+    &.full{
+        height: calc(100% - var(--box-spacing));
+        .ez-box-body{
+            height: 100%;
+        }
+    }
+
     .ez-box-head{
         padding: 30px; 
         padding-bottom: 10px;

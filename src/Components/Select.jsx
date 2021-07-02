@@ -144,8 +144,6 @@ Select.Nice = function (props) {
 		)
 	);
 
-
-
 	const handleSearch = (searchString) => {
 		if(typeof props.onSearch === "function") {
 			return props.onSearch(searchString, options);

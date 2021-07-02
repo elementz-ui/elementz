@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 
-//Controlled & Uncotrolled state hook for components
-function useController(props, getter="active", defaultState, onChange=false) {
-
-	const isFirstRender = useRef(true);
+/**
+ * Hook for supporting Controlled and Uncontrolled states for components
+ * @param {*} props - The component props 
+ * @param {string} getter - The state getter (i.e "value")
+ * @param {*} defaultState - (optional) The initial state
+ * @param {string} onChange - (optional) Fire an onChange event on custom function (i.e "onChange" or "onSelecChange")
+ * @returns {Array} - [state, setState, isControlled] Return
+ */
+function useController(props, getter="active", defaultState, onChange) {
 	const getterUpper = getter.substr(0, 1).toUpperCase() + getter.substr(1);
 	const hasDefaultValue = props.hasOwnProperty('default' + getterUpper);
 	
@@ -11,26 +16,30 @@ function useController(props, getter="active", defaultState, onChange=false) {
 
 	const isControlled = props.hasOwnProperty(getter);
 
-	const [controller, setController] = (isControlled ?
+	const [controller, setController] = isControlled ?
 		[props[getter],
-			typeof props['set' + getterUpper] === "function" ?
-				props['set' + getterUpper] :
-				() => (null)
+		typeof props['set' + getterUpper] === "function" ?
+			props['set' + getterUpper] :
+			() => (null)
 		] :
-		[active, setActive]);
-	
-	useEffect(() => {
-		if(isFirstRender.current) {
-			isFirstRender.current = false;
-			return undefined;
-		}
+		[active, setActive];
 
-		if(!isControlled && onChange && typeof props.onChange === "function") {
-			props.onChange(typeof onChange === "function" ? onChange(active) : active);
-		}
-	}, [active]);
+	const wrappedSetter = useCallback(((onChange &&
+		typeof onChange === "string" &&
+		typeof props[onChange] === "function") ?
+		(newValue, onChangeParams, preventChangeOnFalse = true) => {
+		
+			var onChangeParams = Array.isArray(onChangeParams) ? onChangeParams : [newValue];
+			
+			if(props[onChange](...onChangeParams) === false && preventChangeOnFalse) {
+				return false;
+			}
 
-	return [controller, setController, isControlled];
+			return setController(newValue);
+		}
+		: setController),[isControlled, setController, props, getter, onChange]);
+
+	return [controller, wrappedSetter, isControlled];
 }
 
 

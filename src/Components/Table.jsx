@@ -15,6 +15,7 @@ import Select from './Select';
 import { useVirtual } from 'react-virtual';
 
 import PropTypes from 'prop-types';
+import useController from '../Hooks/useController';
 
   
 const TableFilter = function (props) {
@@ -27,7 +28,7 @@ const TableFilter = function (props) {
 		setSelected,
 		setFilterOpen,
 		filterOpen,
-		setPagination
+		setPage
 	} = props;
 
 	const { allowed, all } = filter;
@@ -64,8 +65,8 @@ const TableFilter = function (props) {
 
 		
 		setFilterOpen(false);
-		setPagination(1);
-		setSelected([]);
+		setPage(1, [1], false);
+		setSelected([], [[],[]], false);
 
 		var values = Array.isArray(filterState.value) ? filterState.value : [filterState.value];
 		values = values.reduce((o, v, i) => ({
@@ -201,8 +202,8 @@ const TableFooter = function (props) {
 	const {
 		options,
 		scroll,
-		pagination,
-		setPagination,
+		page,
+		setPage,
 		start, end, total, limit,
 		isLoading,
 		isRemote,
@@ -211,7 +212,6 @@ const TableFooter = function (props) {
 
 	
 	const pages = Math.max(0, Math.ceil(total / limit)),
-		page = pagination,
 		hasPagination = pages > 1 && options.paginate;
 	
 	var totalPages,
@@ -231,7 +231,7 @@ const TableFooter = function (props) {
 				hasMoreRight = (page + 3) < pages; //eslint-disable-line
 	}
 
-	const unselect = () => (isRemote ? setSelected([]) : null);
+	const unselect = () => (isRemote ? setSelected([],[[],[]], false) : null);
 
 	return (
 		<div className="ez-footer">
@@ -261,7 +261,7 @@ const TableFooter = function (props) {
 								icon='chevron-double-left'
 								className='ez-pg-navigate'
 								onClick={(e) => (
-									setPagination(1),
+									setPage(1),
 									unselect()
 								)}
 							/>
@@ -273,7 +273,7 @@ const TableFooter = function (props) {
 								icon='chevron-left'
 								className='ez-pg-navigate'
 								onClick={(e) => (
-									setPagination(Math.max(1, page - 1)),
+									setPage(Math.max(1, page - 1)),
 									unselect()
 								)}
 							/>
@@ -289,7 +289,7 @@ const TableFooter = function (props) {
 
 											md
 											onClick={(e) => (
-												setPagination(p + 1),
+												setPage(p + 1),
 												unselect()
 											)}
 											disabled={isLoading}
@@ -313,7 +313,7 @@ const TableFooter = function (props) {
 								icon='chevron-right'
 								className='ez-pg-navigate'
 								onClick={(e) => (
-									setPagination(Math.min(pages, page + 1)),
+									setPage(Math.min(pages, page + 1)),
 									unselect()
 								)}
 							/>
@@ -324,7 +324,7 @@ const TableFooter = function (props) {
 								icon='chevron-double-right'
 								className='ez-pg-navigate'
 								onClick={(e) => (
-									setPagination(pages),
+									setPage(pages),
 									unselect()
 								)}
 							/>
@@ -340,78 +340,22 @@ const TableFooter = function (props) {
 
 function Table(props) {
 	
-	const options = {
-		data: [],
-		columns: {},
+	const options = props;
 
-		empty: (
-			<div className={"ez-default-empty"}>No items found.</div>
-		), //Show when empty
-
-		height: '100%',
-
-
-		sortable: [],
-		filterable: true,
-		searchable: true, //Search
-		selectable: true,
-		expandable: false,
-
-		onSort: null, //(a,b) => () Custom sort function
-		onSearch: null, //(searchString) => () Custom search
-		onAction: null, //(row, i, isColumn) => () Actions
-		actionHidden: false, //Show row actions on hover
-
-		loading: false,
-		
-		paginate: true,
-
-		scrollable: null,
-
-		scrollRowHeight: false,
-
-		columnOrder: false, //Disable column ordering (only for performance purposes) | The column keys should match the row keys order
-
-		total: null,
-
-		limit: 10,
-
-		cache: true,
-
-		fixed: false, //Fixed table columns size
-		
-		format: false, //(row, i) => () Format Data into column rows, 
-		
-		onSelect: false, //(row, i, checked) =>(false),
-
-		onExpand: false, //(row, i, expanded) => (false)
-
-		onMobile: false, //Render a custom div `(row, i) => (<MyCustomRow/>)`
-
-		onRowRender: (row, i) => {
-		
-		},
-
-		onRowClick: () => {
-
-		},
-		...props
-	}
-
-	const [sorting, setSorting] = useState({
+	const [sorting, setSorting] = useController(options, "sorting", {
 		type: false,
 		column: null
-	});
+	}, "onSortChange");
 
-	const [searching, setSearching] = useState(null);
+	const [search, setSearch] = useController(options, "search", null, "onSearchChange");
 
-	const [filters, setFilters] = useState({});
+	const [filters, setFilters] = useController(options, "filters", {}, "onFiltersChange");
 
-	const [pagination, setPagination] = useState(1);
+	const [page, setPage] = useController(options, "page", 1, "onPageChange");
 
-	const [selected, setSelected] = useState([]);
+	const [selected, setSelected] = useController(options, "selected", [], "onSelectChange");
 
-	const [expanded, setExpanded] = useState({});
+	const [expanded, setExpanded] = useController(options, "expanded", {}, "onExpandChange");
 
 	const [remote, setRemote] = useState({
 		data: [],
@@ -451,7 +395,7 @@ function Table(props) {
 	const [remoteRefresh, setRemoteRefresh] = useState(0); //Triggers a refresh on remote fetching
 	
 	const isRemote = typeof options.data === "function",
-		getDataIndex = (data) => (md0('' + data.data.length + data.total + pagination + searching + sorting.column + sorting.type + JSON.stringify(filters) + remoteRefresh)),
+		getDataIndex = (data) => (md0('' + data.data.length + data.total + page + search + sorting.column + sorting.type + JSON.stringify(filters) + remoteRefresh)),
 		data_index = getDataIndex(remote),
 		isCache = (options.cache && cache[data_index]),
 		columns = options.columns,
@@ -465,7 +409,6 @@ function Table(props) {
 		colSpan = columns_keys.length + (hasBeforeColumn ? 1 : 0) + (hasAfterColumn ? 1 : 0),
 		isCustom = mobile && typeof options.onMobile === "function",
 		hasActions = (options.selectable && selected.length);
-
 	
 	const ParseData = useMemo(() => {
 		if(isRemote) {
@@ -565,7 +508,7 @@ function Table(props) {
 			filter } = ParseData;
 			
 		const hasFilters = filter.filterables && Object.keys(filters).length;
-		const hasSearching = (options.searchable === true || (Array.isArray(options.searchable) && options.searchable.length)) && typeof searching === "string";
+		const hasSearching = (options.searchable === true || (Array.isArray(options.searchable) && options.searchable.length)) && typeof search === "string";
 		const hasSorting = sorting && sorting.column && columns[sorting.column];
 
 		const searchables = !hasSearching ? false : (options.searchable === true ? columns_keys : (Array.isArray(options.searchable) ? options.searchable : [options.searchable]));
@@ -635,7 +578,7 @@ function Table(props) {
 			if(hasSearching) {
 				isIncluded = false;
 				for(var searchable of searchables) {
-					if(~row.__ez__.dataCaching[searchable].indexOf(searching)) {
+					if(~row.__ez__.dataCaching[searchable].indexOf(search)) {
 						isIncluded = true;
 						break;
 					}
@@ -668,7 +611,7 @@ function Table(props) {
 			limit
 		}
 		
-	}, [ParseData, ParseData.data,  filters.allowed, filters, searching, sorting.type, sorting.column, options.searchable, options.onSort, options.columns]);
+	}, [ParseData, ParseData.data,  filters.allowed, filters, search, sorting.type, sorting.column, options.searchable, options.onSort, options.columns]);
 
 	const PaginateData = useMemo(() => {
 		if(isRemote) {
@@ -684,7 +627,7 @@ function Table(props) {
 		} = FilterData;
 
 		const [start, end] = function () {
-			var start = Math.max(0, (pagination - 1)) * limit,
+			var start = Math.max(0, (page - 1)) * limit,
 				end = start + limit;
 		
 			if(end > total) {
@@ -703,7 +646,7 @@ function Table(props) {
 			paginated
 		}
 
-	}, [FilterData, pagination, options.paginate]);
+	}, [FilterData, page, options.paginate]);
  
 	const {
 		data,
@@ -784,7 +727,7 @@ function Table(props) {
 				paginated = data,
 				total = (remoteTotal || options.total || 0),
 				limit = (options.limit || total),
-				start = scroll ? data.length : (Math.max(0, (pagination - 1)) * limit),
+				start = scroll ? data.length : (Math.max(0, (page - 1)) * limit),
 				end = (start + limit) > total ? total : (start + limit),
 				formatFilters = Object.keys(filters).reduce(
 					(o, v, i) => {
@@ -827,7 +770,7 @@ function Table(props) {
 		}, [
 			remote, isRemote,
 			ParseData, FilterData, ParseData,
-			pagination, filters, searching, sorting,
+			page, filters, search, sorting,
 			options.filterable, options.searchable, options.sortable, options.total, options.limit,
 			options.paginate, options.scrollable, options.columnOrder,
 			columns
@@ -835,7 +778,9 @@ function Table(props) {
 	
 
 	useEffect(() => {
-		setSelected([]);
+		setSelected([],
+			[[], []],
+			false);
 	}, [data, options.data, options.scrollable]);
 
 	useEffect(() => {
@@ -846,7 +791,7 @@ function Table(props) {
 			});
 			setScrollFinish(true);
 		}
-	}, [filters, searching, sorting, scroll, isRemote]);
+	}, [filters, search, sorting, scroll, isRemote]);
 	
 	useEffect(() => {
 		if(!firstRender.current) {
@@ -859,7 +804,7 @@ function Table(props) {
 		if(isRemote && scroll && scrollFinish) {
 			setLoading(true);
 
-			Promise.resolve(options.data(start, limit, formatFilters, searching, sorting))
+			Promise.resolve(options.data(start, limit, formatFilters, search, sorting))
 				.then((res) => {
 					if(!res || !Array.isArray(res.data) || isNaN(Number(res.total))) {
 						console.warn(res);
@@ -881,9 +826,12 @@ function Table(props) {
 				.catch((err) => {
 					console.error(err);
 				})
-				.then(() => (setLoading(false), setSelected([])));
+				.then(() => {
+					setLoading(false);
+					setSelected([], [[],[]], false);
+				});
 		}
-	}, [isRemote, options.data, filters, searching, sorting, scroll, scrollFinish, remote])
+	}, [isRemote, options.data, filters, search, sorting, scroll, scrollFinish, remote])
 	
 	useEffect(() => {
 		if(isRemote && !scroll) {
@@ -893,7 +841,7 @@ function Table(props) {
 			}
 
 			setLoading(true);
-			Promise.resolve(options.data(start, limit, formatFilters, searching, sorting))
+			Promise.resolve(options.data(start, limit, formatFilters, search, sorting))
 				.then((res) => {
 					if(!res || !Array.isArray(res.data) || isNaN(Number(res.total))) {
 						console.warn(res);
@@ -917,10 +865,14 @@ function Table(props) {
 				.catch((err) => {
 					console.error(err);
 				})
-				.then(() => (setLoading(false), setSelected([])));
+				.then(() => {
+					setLoading(false);
+					
+					setSelected([], [[],[]], false);
+				});
 			
 		}
-	},[isRemote, options.data, start, end, filters, searching, sorting, scroll, isCache, data_index])
+	},[isRemote, options.data, start, end, filters, search, sorting, scroll, isCache, data_index])
 	
 	useEffect(() => {
 		const handleResize = function (e) {
@@ -936,7 +888,6 @@ function Table(props) {
 	useEffect(() => {
 		firstRender.current = false;
 	}, []);
-
 	
 	const handleColClick = function (name, col) {
 		
@@ -952,7 +903,7 @@ function Table(props) {
 				col.onClick({
 					...col,
 					isColumn: true
-				}, 0, e);
+				}, null, 0, e);
 			}
 		}
 	}
@@ -971,55 +922,59 @@ function Table(props) {
 				col.onDoubleClick({
 					...col,
 					isColumn: true
-				}, 0, e);
+				}, null, 0, e);
 			}
 		}
 	}
 
 	const handleRowClick = function (row, i) {
 		return function (e) {
+			var isCheckbox =
+				e.target.classList.contains("ez-rb-container") ||
+				e.target.parentNode.classList.contains("ez-rb-container") ||
+				e.target.parentNode.parentNode.classList.contains("ez-rb-container");
+			
+			if(isCheckbox) {
+				return false;
+			}
 			if(typeof options.onRowClick === "function") {
 				options.onRowClick(row, i, e);
 			}
 		}
 	}
 
-
-	const handleCellClick = function (column, cell, i) {
+	const handleCellClick = function (column, cell, i, row) {
 		return function (e) {
 			if(typeof columns[column].onClick === "function") {
-				columns[column].onClick(cell, i, e);
+				columns[column].onClick(cell, row, i, e);
 			}
 		}
 	}
 
-	const handleCellMouseOver = function (column, cell, i) {
+	const handleCellMouseOver = function (column, cell, i, row) {
 		return function (e) {
 			if(typeof columns[column].onMouseOver === "function") {
-				columns[column].onMouseOver(cell, i, e);
+				columns[column].onMouseOver(cell, row, i, e);
 			}
 		}
 	}
 	
 	const handleSearch = debounce(function (e) {
-		const value = e.target.value;
+		const { target } = e;
+		const value = target.value;
 
 		if(!value || !value.trim() || !options.searchable) {
-			if(searching) {
-				setSearching(false);
+			if(search) {
+				setSearch(false);
 			}
 			return false;
 		}
 		
-		setPagination(1);
-		
-		if(typeof options.onSearch !== "function"
-			|| (typeof options.onSearch === "function" && options.onSearch(value) === undefined)) {
-			setSearching(isRemote ? value : value.toLowerCase());
-		}
+		setPage(1);
+		setSearch(isRemote ? value : value.toLowerCase());
 		
 	}, isRemote ? 500 : 1);
-
+	
 	const handleScroll = function (e) {
 		var _horizontalScrolling = {
 			scrolling: false,
@@ -1046,40 +1001,43 @@ function Table(props) {
 		}
 	}
 	
-	const handleRowSelect = function(e, originalIndex, customIndex){		
-		if(typeof options.onSelect === "function") {
-			var res = options.onSelect([customIndex], originalIndex, !~selected.indexOf(customIndex), e);
-			if(res === false || res === null) {
-				return false;
-			}
-		}
-		
-		return !~selected.indexOf(customIndex) ? setSelected([
+	const handleRowSelect = function (row, originalIndex, customIndex, e) {	
+		var updateSelected = !~selected.indexOf(customIndex) ? [
 			...selected,
 			customIndex
-		]) : setSelected([
-			...selected.slice(0, selected.indexOf(customIndex)),
-			...selected.slice(selected.indexOf(customIndex) + 1, selected.length)
-		])
+		] : [
+				...selected.slice(0, selected.indexOf(customIndex)),
+				...selected.slice(selected.indexOf(customIndex) + 1, selected.length)
+			];
+		
+		//Forward to onChange listener
+		var onChangeParams = [
+			updateSelected.map((i) => filtered_indexed[i]), //rows
+			updateSelected //selected
+		];
+		
+		return setSelected(updateSelected, onChangeParams);
 	}
 
-	const handleRowExpand = function (e, originalIndex, customIndex) {
-		var res = "Nothing to see here";
+	const handleRowExpand = function (row, originalIndex, customIndex, e) {
+		var expandedContent = typeof options.onExpand === "function" ?
+			options.onExpand(filtered_indexed[customIndex], originalIndex, !expanded[customIndex]) :
+			"Nothing to see here";
 
-		if(typeof options.onExpand === "function") {
-			res = options.onExpand(filtered_indexed[customIndex], originalIndex, !expanded[customIndex]);
-			if(!res) {
-				return false;
-			}
-		}
-
-		return !expanded[customIndex] ? setExpanded({
+		var updateExpanded = !expanded[customIndex] ? {
 			...expanded,
-			[customIndex]: res
-		}) : setExpanded({
-			...expanded,
-			[customIndex]: undefined
-		});
+			[customIndex]: expandedContent
+		} : {
+				...expanded,
+				[customIndex]: undefined
+			};
+		
+		var onChangeParams = [
+			Object.keys(updateExpanded).map((i) => filtered_indexed[i]), //rows
+			updateExpanded //expanded
+		];
+	
+		return setExpanded(updateExpanded, onChangeParams);
 	}
 
 	const handleScrollRowHeight = (e, paginatedIndex) => {
@@ -1097,11 +1055,19 @@ function Table(props) {
 			checked={selected.length > 0}
 			incomplete={selected.length < filtered_indexed_keys.length}
 			onChange={
-				(e) => (
-					selected.length === filtered_indexed_keys.length ?
-						setSelected([])
-						: setSelected(filtered_indexed_keys)
-				)
+				(e) => {
+					var updateSelected = selected.length === filtered_indexed_keys.length ?
+						[] :
+						filtered_indexed_keys;
+
+					var onChangeParams = [
+						updateSelected.map((i) => (filtered_indexed[i])), //rows
+						updateSelected, //selected
+						true //isSelectAll
+					];
+
+					return setSelected(updateSelected, onChangeParams);
+				}
 			}
 			value={
 				selected.length > 0 ? numberWithCommas(selected.length) + ' Selected' : ''
@@ -1114,27 +1080,34 @@ function Table(props) {
 		<div className="ez-column-actions">
 				{
 					options.onAction && (typeof options.onAction === "function") && options.selectable && selected.length > 0 ?
-					options.onAction(
-						selected.map((c, i) => (data_indexed[c])), selected.map((c, i) => (data_indexed[c] ? data_indexed[c].__ez__.originalIndex : -1)), true)
+						options.onAction(
+							selected.map((i) => (data_indexed[i])), //rows
+							selected.map((i) => (
+								data_indexed[i] ?
+									data_indexed[i].__ez__.originalIndex :
+									-1)
+							), //indexes
+							true //isBulk
+						)
 						: null
 				}
 		</div>
 	)
 
 
-	const selectRow = (originalIndex, customIndex) => (
+	const selectRow = (row, originalIndex, customIndex) => (
 			<Input
 				key={`ez-select-row-check-${customIndex}`}
 				secondary
 				type="checkbox"
 				checked={~selected.indexOf(customIndex)}
 				onChange={(e) => (
-						handleRowSelect(e, originalIndex, customIndex)
+						handleRowSelect(row, originalIndex, customIndex, e)
 				)}
 			/>
 	);
 
-	const expandRow = (originalIndex, customIndex) => (
+	const expandRow = (row, originalIndex, customIndex) => (
 		<Icon
 			name={
 				!expanded[customIndex]
@@ -1142,7 +1115,7 @@ function Table(props) {
 			}
 			className='ez-expand-icon'
 			onClick={(e) => (
-				handleRowExpand(e, originalIndex, customIndex)
+				handleRowExpand(row, originalIndex, customIndex, e)
 			)}
 		>
 
@@ -1173,17 +1146,17 @@ function Table(props) {
 		</th>
 	);
 
-	const beforeRow = (originalIndex, customIndex) => (
+	const beforeRow = (row, originalIndex, customIndex) => (
 		<td key={`ez-row-before-${customIndex}`} className={`ez-row-before ez-rb-${customIndex}`}>
 			<div className='ez-rb-container'>
 				{
 					options.expandable ?
-						expandRow(originalIndex, customIndex)
+						expandRow(row, originalIndex, customIndex)
 						: null
 				}
 				{
 					options.selectable ?
-						selectRow(originalIndex, customIndex)
+						selectRow(row, originalIndex, customIndex)
 						: null
 				}
 				
@@ -1229,9 +1202,7 @@ function Table(props) {
 		</div>
 	);
 
-
-	const renderColumns = function () {
-		
+	const renderColumns = function () {		
 		const mainClassname = classNames(
 			"ez-columns",
 			{
@@ -1290,13 +1261,13 @@ function Table(props) {
 		)
 	}();
 
-	const renderCell = (column, cell, i) => {
+	const renderCell = (column, cell, i, row) => {
 		if(!columns[column] || typeof columns[column] !== "object") {
 			return null;
 		}
-		var cell = (typeof columns[column].onRender === "function") ? (columns[column].onRender(cell, i) || cell) : cell;
+		var cell = (typeof columns[column].onRender === "function") ? columns[column].onRender(cell, row, i) : cell;
 		return (
-			<td key={`ez-td-${column}-${i}`} onClick={handleCellClick(column, cell, i)} onMouseOver={handleCellMouseOver(column, cell, i)}>
+			<td key={`ez-td-${column}-${i}`} onClick={handleCellClick(column, cell, i, row)} onMouseOver={handleCellMouseOver(column, cell, i, row)}>
 				{cell}
 			</td>
 		)
@@ -1345,7 +1316,7 @@ function Table(props) {
 		var touchTimeout;
 		var handleTouchStart = function (e) {
 			touchTimeout = setTimeout(function () {
-				handleRowSelect(e, originalIndex, customIndex);
+				handleRowSelect(row, originalIndex, customIndex, e);
 			}, 300);
 			return touchTimeout;
 		}
@@ -1358,7 +1329,7 @@ function Table(props) {
 
 		var expandRow = options.expandable ? (
 			<div className='ez-row-custom-expand-container' onClick={(e) => (
-				handleRowExpand(e, originalIndex, customIndex)
+				handleRowExpand(row, originalIndex, customIndex, e)
 			)}>
 				<Icon
 					name={
@@ -1400,7 +1371,7 @@ function Table(props) {
 		var originalIndex = row ? row.__ez__.originalIndex : -1;
 		var customIndex = row ? row.__ez__.index : -1;
 
-		var cells = Object.keys(row).map((name) => (renderCell(name, row[name], originalIndex)));
+		var cells = Object.keys(row).map((name) => (renderCell(name, row[name], originalIndex, row)));
 
 		var rowProps = getRowProps(row, originalIndex, customIndex);
 
@@ -1418,7 +1389,7 @@ function Table(props) {
 
 				>
 					{hasBeforeActions ?
-						beforeRow(originalIndex, customIndex)
+						beforeRow(row, originalIndex, customIndex)
 						: null
 					}
 
@@ -1467,7 +1438,11 @@ function Table(props) {
 					setFilters({
 						...filters,
 						[column]: removedFilter
-					}), setPagination(1), setSelected([])
+					});
+		
+					setPage(1, [1], false);
+					setSelected([], [[],[]], false);
+
 				}} name="close" />
 			</div>
 		))
@@ -1561,10 +1536,10 @@ function Table(props) {
 		setSelected,
 		isLoading,
 		filter,
-		pagination,
+		page,
 		filterOpen,
 		setFilterOpen,
-		setPagination,
+		setPage,
 		start, end, total, limit,
 		isRemote,
 	};
@@ -1626,7 +1601,11 @@ function Table(props) {
 					{
 						options.searchable ? 
 							<div className="ez-search">
-								<Input secondary lg auto type='text' disabled={!isRemote && (!paginated || !paginated.length) && !searching} placeholder='Search' className='form-control' before={
+								<Input
+									secondary lg auto type='text'
+									disabled={!isRemote && (!paginated || !paginated.length) && !search}
+									placeholder='Search'
+									className='form-control' before={
 									<Icon name='search' />
 								}
 								onChange={handleSearch} />
@@ -1717,6 +1696,12 @@ function Table(props) {
 }
 
 Table.defaultProps = {
+	data: [],
+	columns: {},
+	empty: (
+		<div className={"ez-default-empty"}>No items found.</div>
+	), //Show when empty
+
 	height: '100%',
 	sortable: true,
 	filterable: true,
@@ -1726,13 +1711,13 @@ Table.defaultProps = {
 	columnOrder: false,
 	cache: true,
 	limit: 10
-
 }
+
 Table.propTypes = {
 	/**
-	 * An array of data objects
+	 * An array of data objects (Memoized)
 	 * <br/>- OR -
-	 * <br/>A memoized function `(offset, limit, filters, search, sort) => Promise({data, total})`
+	 * <br/>A memoized callback function `(offset, limit, filters, search, sort) => Promise({data, total})`
 	 */
 	data: PropTypes.oneOfType([
 		PropTypes.array,
@@ -1740,7 +1725,7 @@ Table.propTypes = {
 	]),
 
 	/**
-	 * Table columns
+	 * Table columns (Object must be memoized)
 	 */
 	columns: PropTypes.object,
 
@@ -1749,6 +1734,31 @@ Table.propTypes = {
 	 */
 	limit: PropTypes.number,
 
+	/**
+	 * Loading state
+	 */
+	loading: PropTypes.bool,
+
+	/**
+	 * Render Component when no items found
+	 */
+	empty: PropTypes.node,
+
+	/**
+	 * Table height
+	 */
+	height: PropTypes.string,
+
+	/**
+	 * Fixed Table Layot
+	 */
+	fixed: PropTypes.bool, 
+
+	/**
+	 * A memoized callback function for formatting the data. `(row, i) => ({})`
+	 * <br/> You should probably use this if your data object keys doesn't match the column keys, or the order is not the same.
+	 */
+	format: PropTypes.func, 
 
 	/**
 	 * Enable pagination
@@ -1761,15 +1771,6 @@ Table.propTypes = {
 	 * <br/>It can be either `auto`, a percentage i.e `100%`, or pixels i.e `500px` 
 	 */
 	scrollable: PropTypes.oneOfType([
-		PropTypes.string,
-		PropTypes.bool
-	]),
-
-	/**
-	 * Row Height is automatically calculated when scrolling.
-	 * If your rows have a static height, you can set it here.
-	 */
-	scrollRowHeight: PropTypes.oneOfType([
 		PropTypes.string,
 		PropTypes.bool
 	]),
@@ -1814,38 +1815,26 @@ Table.propTypes = {
 	onExpand: PropTypes.func,
 
 	/**
-	 * Custom sorting function. `(a,b) => ()`
-	 */
-	onSort: PropTypes.func,
-
-	/**
-	 * Search Event Listener. `(searchString) => ()`
-	 * <br/>Return `false` to prevent default searching  
-	 */
-	onSearch: PropTypes.func,
-
-	/**
-	 * Select Event Listener. `(row, i, isSelected)=>()`
-	 */
-	
-	onSelect: PropTypes.func,
-
-	/**
 	 * Render action buttons. `(row, i , isBulk) => (<MyCustomActions/>)`
 	 */
 	onAction: PropTypes.func,
 
 	/**
-	 * Show row actions on hover
+	 * Only show row actions on hover
 	 */
 	actionHidden: PropTypes.bool,
 
+	/**
+	 * Custom sorting function. `(a,b) => ()`
+	 */
+	onSort: PropTypes.func,
+	
 	/**
 	 * Turn on responsive mode & render custom rows for Mobile.
 	 * `(row, i) => (<MyCustomRow/>)`
 	 */
 	onMobile: PropTypes.func,
-
+	
 	/**
 	 * Called on Row Render. `(row, i) => ()`
 	 * <br/>Return `false` to skip row.
@@ -1857,44 +1846,131 @@ Table.propTypes = {
 	 * Set onClick for row. `(row, i) => ()`
 	 */
 	onRowClick: PropTypes.func,
-	
 
+	/**
+	 * Controlled pagination page state
+	 */
+	page: PropTypes.number,
+
+	/**
+	 * Controlled page state setter (Simpler alternative than using `onPageChange` for only updating controlled state)
+	 */
+	setPage: PropTypes.func,
+
+	/**
+	 * Fires on page change. (page) => ()
+	 * <br/> Return `false` to prevent default.
+	 */
+	onPageChange: PropTypes.func,
+
+	/**
+	 * Default pagination page
+	 */
+	defaultPage: PropTypes.number,
+
+	/**
+	 * Controlled search state
+	 */
+	search: PropTypes.string,
+
+	/**
+	 * Controlled search state setter (Simpler alternative than using `onSearchChange` for only updating controlled state)
+	 */
+	setSearch: PropTypes.func,
+
+	/**
+	 * Fires on search change. (value) => ()
+	 * <br/> Return `false` to prevent default.
+	 */
+	onSearchChange: PropTypes.func,
+
+	/**
+	 * Default Search Value
+	 */
+	defaultSearch: PropTypes.string,
+	
+	/**
+	 * Controlled selected rows state (An array of custom row index keys that is calculated on row rendering)
+	 */
+	selected: PropTypes.array,
+
+	/**
+	 * Controlled selected state setter (Simpler alternative than using `onSelectChange` for only updating controlled state)
+	 */
+	setSelected: PropTypes.func,
+
+	/**
+	 * Fires on selection change. (rows, selected, isSelectAllAction) => ()
+	 * <br/> Return `false` to prevent default.
+	 */
+	onSelectChange: PropTypes.func,
+
+	/**
+	 * Controlled expanded rows state (An object: {customRowIndexKey: expandedContent})
+	 */
+	expanded: PropTypes.object,
+
+	/**
+	 * Controlled expanded state setter (Simpler alternative than using `onExpandChange` for only updating controlled state)
+	 */
+	setExpanded: PropTypes.func,
+
+	/**
+	 * Fires on expanded rows change. (rows, expanded) => ()
+	 * <br/> Return `false` to prevent default.
+	 */
+	onExpandChange: PropTypes.func,
+
+	/**
+	 * Controlled filters state (An object: { columnKey: { filterValue: isNotNegative }} )
+	 */
+	filters: PropTypes.object,
+
+	/**
+	 * Controlled filters state setter (Simpler alternative than using `onFiltersChange` for only updating controlled state)
+	 */
+	setFilters: PropTypes.func,
+
+	/**
+	 * Fires on filters change. (filters) => ()
+	 * <br/> Return `false` to prevent default.
+	 */
+	onFiltersChange: PropTypes.func,
+
+	/**
+	 * Controlled sort state (An object: {`type`: isAscending, `column`: columnKey} )
+	 */
+	sorting: PropTypes.object,
+
+	/**
+	 * Controlled sorting state setter (Simpler alternative than using `onSortChange` for only updating controlled state)
+	 */
+	setSorting: PropTypes.func,
+
+	/**
+	 * Fires on sort change. (sorting) => ()
+	 * <br/> Return `false` to prevent default.
+	 */
+	onSortChange: PropTypes.func,
+	
 	/**
 	 * Caching data for Remote Mode
 	 */
 	cache: PropTypes.bool,
-
+	
 	/**
-	 * Loading state
+	 * Virtual Row Height is automatically calculated when scrolling.
+	 * If your rows have a static height, you can set it here.
 	 */
-	loading: PropTypes.bool,
-
-	/**
-	 * Render element when no items found
-	 */
-	empty: PropTypes.node,
-
-	/**
-	 * Table height
-	 */
-	height: PropTypes.string,
-
-	/**
-	 * Fixed Table Layot
-	 */
-	fixed: PropTypes.bool, 
-
-	/**
-	 * A function for formatting the data. `(row, i) => ({row})`
-	 */
-	format: PropTypes.bool, 
+	scrollRowHeight: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.bool
+	]),
 	
 	/**
 	 * The column keys should match the row keys order. This is disabled for best performance. 
 	 */
 	columnOrder: PropTypes.bool,
-
-
 }
 
 export default Table;
