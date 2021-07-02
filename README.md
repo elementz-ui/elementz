@@ -5,7 +5,15 @@
 </p>
 
 <h1 align="center">Elementz</h1>
+<div align="center">
+  
+[![npm](https://img.shields.io/npm/v/elementz)](https://www.npmjs.com/package/elementz)
+[![npm](https://img.shields.io/npm/dw/lodash)](https://www.npmjs.com/package/elementz)
+
 A React Component library for buliding modern applications easily & quickly.
+
+<a href="https://elementz.style"><img src="https://elementz.style/showcase_small.png" height="300px" /><img src="https://elementz.style/showcase_white.png" height="300px" /></a>
+</div>
 
 ### Documentation
 Learn more at https://elementz.style

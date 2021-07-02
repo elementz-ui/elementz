@@ -1,6 +1,6 @@
 {
   "name": "elementz",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A React UI Library for modern and easier development",
   "main": "lib/elementz.js",
   "scripts": {
