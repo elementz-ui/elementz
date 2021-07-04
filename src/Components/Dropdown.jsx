@@ -1,75 +1,35 @@
 
-import React from 'react';
-import { classNames, filterProps } from '../Functions/Functions';
+import React, { useRef, useEffect, useState } from 'react';
+import { classNames, filterProps, refHandler } from '../Functions/Functions';
 import "./../Style/Dropdown.scss";
 import PropTypes, { element } from 'prop-types';
+import { useMultiState } from '../Elementz';
+import useController from '../Hooks/useController';
 
-class Dropdown extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			right: this.props.right,
-			top: this.props.top,
-			active: (this.props.hasOwnProperty('defaultActive') ? this.props.defaultActive : false),
-			right: null
-		}
-		this.lastTop = React.createRef(false);
-
-		this.isControlled = this.props.hasOwnProperty('active');
-
-		this.forwardChange = ((active, e) => {
-			if(typeof this.props.onChange === "function") {
-				return this.props.onChange(active, e) !== false;
-			}
-			return true;
-		}).bind(this);
-
-		this.setMain = ((e) => {
-			this.main = e;
-		}).bind(this);
-
-		this.setBody = ((e) => {
-			this.body = e;
-		}).bind(this);
-
-		this.handleClickOutside = this.handleClickOutside.bind(this);
-		this.handleResize = this.handleResize.bind(this);
-		this.checkOffset = this.checkOffset.bind(this);
-		this.setActive = (function (active) {
-			return this.isControlled ?
-				typeof this.props.setActive === "function" ? this.props.setActive(active) : () => (null) : this.setState({
-					active: active
-				});
-		}).bind(this);
-	}
-
-	get active() {
-		return this.isControlled ?
-			this.props.active : this.state.active;
-	}
-
+const Dropdown = React.forwardRef((props, ref) => {
 	
+	const [position, setPosition] = useMultiState({
+		top: props.top,
+		right: null
+	});
 
-	componentDidMount() {
-		document.addEventListener('mousedown', this.handleClickOutside);
-		document.addEventListener('resize', this.handleResize);
-		if(this.state.right === null) {
-			this.handleResize();
-		}
-	}
+	const [active, setActive, isControlled] = useController(
+		props,
+		"active",
+		props.defaultActive,
+		"onChange"
+	);
 
-	componentWillUnmount() {
-		document.removeEventListener('mousedown', this.handleClickOutside);
-		document.removeEventListener('resize', this.handleResize);
-	}
+	const lastTop = useRef(false),
+		body = useRef(false),
+		main = useRef(false);
 
-	checkOffset(e) {
-		if(!this.body) {
+	const checkOffset = (e) => {
+		if(!body.current) {
 			return false;
 		}
 
-		var elementSize = this.body.getBoundingClientRect();
+		var elementSize = body.current.getBoundingClientRect();
 		var viewportHeight = window.document.documentElement.clientHeight;
 
 		var offset = {
@@ -77,92 +37,97 @@ class Dropdown extends React.Component {
 			bottom: viewportHeight - elementSize.bottom,
 		};
 
-		this.setState({
-			right: this.props.right || (this.body.scrollWidth > this.body.clientWidth),
-			top: this.props.top || (offset.bottom < 25 && offset.top > offset.bottom)
+		setPosition({
+			right: props.right || body.current.scrollWidth > body.current.clientWidth,
+			top: props.top || (offset.bottom < 25 && offset.top > offset.bottom)
 		});
 	}
 
-	handleResize(e) {
-		this.checkOffset()
-	}
+	const handleResize = (e) => (
+		checkOffset()
+	);
 
-	handleClickOutside(e) {
-		if(this.main && !this.main.contains(e.target)) {
-			if(typeof this.props.onOutsideClick === "function") {
-				return this.props.onOutsideClick(e);
+	const handleClickOutside = (e) => {
+		if(main.current && !main.current.contains(e.target)) {
+			if(typeof props.onOutsideClick === "function") {
+				return props.onOutsideClick(e);
 			}
-			if(this.forwardChange(false)) {
-				this.setActive(false);
-			}
-			
+			setActive(false);	
 		}
 	}
 
-	render() {
-		var className = classNames(
-			'dropdown',
-			{
-				'open': this.active,
-				'hover': this.props.hover,
-				'left': this.props.left,
-				'right': this.props.right || this.state.right,
-				'top': (this.props.top || this.state.top || this.lastTop.current) && this.props.top !== false,
-				'fullLeft': this.props.fullLeft,
-				'noMobile': this.props.noMobile,
-				'mobileLeft': this.props.mobileLeft,
-				'mobileLarge': this.props.mobileLarge,
-				'md': this.props.medium || this.props.md,
-				'lg': this.props.large || this.props.lg,
-				'xl': this.props.xl,
-				'full': this.props.full,
-			},
-			this.props.className
-		);
-		
+	useEffect(() => {
+		document.addEventListener('mousedown', handleClickOutside);
+		document.addEventListener('resize', handleResize);
+		handleResize();
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+			document.removeEventListener('resize', handleResize);
+		}
+	}, []);
 
-		var bodyClassName = classNames(
-			'd-body',
-			{
-				'open': (this.active || this.props.hover),
-			}
-		);
-		
-		var passProps = filterProps(this.props,
-			[
-				'handle', 'className', 'hover', 'onOutsideClick', 'closeOnClick', 'ref',
-				"md", "lg", "xl", "medium", "large",'left', 'defaultActive', 'setActive', 'active'
-			]
-		);
+	const className = classNames(
+		'dropdown',
+		{
+			'open': active,
+			'hover': props.hover,
+			'left': props.left,
+			'right': props.right || position.right,
+			'top': (props.top || position.top || lastTop.current) && props.top !== false,
+			'fullLeft': props.fullLeft,
+			'noMobile': props.noMobile,
+			'mobileLeft': props.mobileLeft,
+			'mobileLarge': props.mobileLarge,
+			'md': props.medium || props.md,
+			'lg': props.large || props.lg,
+			'xl': props.xl,
+			'full': props.full,
+		},
+		props.className
+	);
+	
 
-		this.lastTop.current = this.state.top;
+	const bodyClassName = classNames(
+		'd-body',
+		{
+			'open': (active || props.hover),
+		}
+	);
+	
+	const passProps = filterProps(props,
+		[
+			'handle', 'className', 'hover', 'onOutsideClick', 'closeOnClick', 'ref',
+			"md", "lg", "xl", "medium", "large", 'left', 'defaultActive', 'setActive', 'active'
+		]
+	);
 
-		return (
-			<div {...passProps}  ref={this.setMain} className={className}>
-					<div
-					className={classNames('d-handle',
-						{
-							'ez-dropdown-arrow': this.props.arrow && !this.state.top,
-							'border': this.props.arrowBorder
-						}
-					)}
-					onClick={((e) => {
-						if(!this.props.disabled && !this.props.hover && this.forwardChange(!this.active)) {
-							setTimeout((() => (this.checkOffset())).bind(this), 70);
-							this.setActive(!this.active)
-						}
-					}).bind(this)}
-							
-					>
-					{this.props.handle}
-				</div>
-				<div ref={this.setBody} className={bodyClassName}>
-					{this.props.children}
-				</div>
+	lastTop.current = position.top;
+
+	return (
+		<div {...passProps} ref={main} className={className}>
+			<div
+				className={classNames('d-handle',
+					{
+						'ez-dropdown-arrow': props.arrow && !position.top,
+						'border': props.arrowBorder
+					}
+				)}
+				onClick={(e) => {
+					if(!props.disabled && !props.hover) {
+						setTimeout(() => (checkOffset()), 70);
+						setActive(!active)
+					}
+				}}
+						
+			>
+				{props.handle || props.handler || props.action || props.button}
 			</div>
-		);
-	}
-}
+			<div ref={refHandler(body, ref)} className={bodyClassName}>
+				{props.children}
+			</div>
+		</div>
+	);
+});
 
 Dropdown.propTypes = {
 	/** state | Controlled is active */

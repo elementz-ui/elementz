@@ -10,8 +10,6 @@ import useController from '../Hooks/useController';
 export const NavContext = React.createContext(null);
 
 function Nav(props) {
-	
-
 	const [active, setActive] = useController(props, 'active', 0);
 	
 	const forwardChange = (active, e) => (

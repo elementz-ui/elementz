@@ -6,11 +6,9 @@
     display: block;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     background: rgba(255, 255, 255, 0.65);
     outline: 0;
-
-    
 
     .modal-dialog {
         position: relative;
@@ -35,6 +33,19 @@
         }
     }
 
+    &:not(.transparent){
+        .modal-content{
+            background-color: var(--background-light); 
+        }
+        &:not(.no-border) .modal-content{
+            border: var(--border-width) solid var(--border);
+            border-radius: var(--border-radius);
+        }
+        &:not(.no-shadow) .modal-content{
+            box-shadow: var(--shadow);
+        }
+    }
+
     .modal-content {
         position: relative;
         display: -webkit-box;
@@ -47,15 +58,12 @@
         min-height: 300px;
         width: 100%;
         pointer-events: auto;
-        background-color: var(--background-light);
         background-clip: padding-box;
-        border: var(--border-width) solid var(--border);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
         outline: 0;
         transition: .15s;
         overflow: hidden;
     }
+    
     .close {
         position: absolute;
         right: 0;

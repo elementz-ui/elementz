@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const LoadingContext = React.createContext(null);
 
-function Loading(props) {
+const Loading = React.forwardRef((props, ref) => {
 	var isLoading = (props.isLoading || props.loading || props.isFetching || props.fetching);
 	isLoading =
 		(!props.hasOwnProperty('isLoading') &&
@@ -34,9 +34,9 @@ function Loading(props) {
 	);
 
 	return isLoading ?
-		<div className={className}></div>
+		<div className={className} ref={ref}></div>
 		: props.children || null;
-}
+});
 
 //eslint-disable-next-line
 Loading.Skeleton = function (props) {

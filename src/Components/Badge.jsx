@@ -7,7 +7,7 @@ import Icon from './Icon';
 import PropTypes from 'prop-types';
 
 
-function Badge(props) {
+const Badge = React.forwardRef((props, ref) => {
 	const passProps = filterProps(props);
 
 	const className = classNames("ez-badge", props.className, {
@@ -30,13 +30,17 @@ function Badge(props) {
 	});
 
 	return (
-		<span {...passProps} className={className} >
+		<span
+			{...passProps}
+			className={className}
+			ref={ref}
+		
+		>
 			{props.children}
 			{props.icon ? <Icon name={props.icon} /> : null}
 		</span>
 	);
-		
-}
+});
 
 Badge.propTypes = {
 		/** Use primary theme colors */

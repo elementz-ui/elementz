@@ -6,8 +6,8 @@ import "./../Style/Button.scss";
 import Group from './Group';
 import PropTypes from 'prop-types';
 
-function Button(props) {
-	
+
+const Button = React.forwardRef((props, ref) => {
 	const [active, setActive] = useState(null);
 
 	const effect = isValidEffect(props.effect);
@@ -18,8 +18,6 @@ function Button(props) {
 		setActive(false);
 		setTimeout(() => (setActive(true)), 100);
 	}
-
-
 
 	const classes = {
 		'hasIcon': icon && (props.children || props.value),
@@ -50,37 +48,38 @@ function Button(props) {
 		'box-shadow': props.boxShadow
 	};
 
-	
-
 	const className = classNames("ez-button", classes, props.size, props.className, effect);
-
 
 	const passProps = filterProps(props, [
 		...Object.keys(classes),
 	]);
 
 	return (
-		<button {...passProps} type={props.type || 'button'} className={className} onClick={(e) => {
-			if(props.disabled || props.loading) {
-				e.preventDefault();
-				return false;
-			}
-			setEffect();
-			if(typeof props.onClick === "function") {
-				return props.onClick(e);
-			}
-		}}>
+		<button {...passProps}
+			type={props.type || 'button'}
+			className={className}
+			onClick={(e) => {
+				if(props.disabled || props.loading) {
+					e.preventDefault();
+					return false;
+				}
+				setEffect();
+				if(typeof props.onClick === "function") {
+					return props.onClick(e);
+				}
+			}}
+			ref={ref}
+		>
 			{
-				(icon ?	<Icon className={props.iconClassName} name={icon}></Icon> : '')
+				(icon ? <Icon className={props.iconClassName} name={icon}></Icon> : '')
 			}
-			{props.value || props.children} 
+			{props.value || props.children}
 			{
 				(props.count ? <span className='count'>{props.count}</span> : '')
 			}
 		</button>
 	);
-}
-
+});
 
 Button.propTypes = {
 	/** Left icon name */

@@ -1,6 +1,6 @@
 {
   "name": "elementz",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A React UI Library for modern and easier development",
   "main": "lib/elementz.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "faker": "^5.5.3",
     "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^1.3.3",
+    "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-chartjs-2": "^3.0.3",
     "react-color": "^2.19.3",

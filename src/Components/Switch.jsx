@@ -5,15 +5,15 @@ import useController from '../Hooks/useController';
 import "../Style/Switch.scss";
 import PropTypes from 'prop-types';
 
-function Switch(props) {
-	
+
+const Switch = React.forwardRef((props, ref) => {
 	const [controller, setController, isControlled] = useController(props, 'checked', false);
 	
 	const forwardChange = (e) => (
 		typeof props.onChange === "function" ? (props.onChange(e) !== false) : true
 	);
 
-	const handleClick =(e) => {
+	const handleClick = (e) => {
 		if(props.disabled) {
 			return false;
 		}
@@ -38,12 +38,14 @@ function Switch(props) {
 		}
 	);
 
-	const passProps = filterProps(props,["defaultChecked", "setChecked","on","off", "name", 'onChange']);
+	const passProps = filterProps(props, ["defaultChecked", "setChecked", "on", "off", "name", 'onChange']);
 
 	return (
 		<div {...passProps}
 			onClick={handleClick}
-			className={className} >
+			className={className}
+			ref={ref}
+		>
 			<div className='ez-switch-text'>{
 				(controller ? props.on : props.off) || null
 			}</div>
@@ -51,9 +53,7 @@ function Switch(props) {
 			<input className='invisible' type="checkbox" readOnly name={props.name} value={props.value} checked={controller} />
 		</div>
 	);
-		
-}
-
+});
 
 Switch.propTypes = {
 	/** Input `name` to pass on the native checkbox, useful for Form Submits */

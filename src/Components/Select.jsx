@@ -6,9 +6,9 @@ import NiceSelect from 'react-select-me';
 import Icon from './Icon';
 import Loading from './Loading';
 import useController from '../Hooks/useController';
-import { func } from 'prop-types';
 
-function Select(props) {
+
+const Select = React.forwardRef((props, ref) => {
 	const passProps = filterProps(props);
 
 	const className = classNames(
@@ -18,12 +18,11 @@ function Select(props) {
 	);
 
 	return (
-		<select {...passProps} className={className} >
+		<select {...passProps} className={className} ref={ref} >
 			{props.children}
 		</select>
 	);
-		
-}
+});
 
 //eslint-disable-next-line
 Select.Nice = function (props) {

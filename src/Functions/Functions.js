@@ -12,7 +12,7 @@ export function filterProps (fromProps, extraProps=[]) {
 		'cancel', 'iconClassName', 'arrow', 'border', 'arrowBorder', 'circle', 'reverse', 'gradient',
 		'incomplete', 'dot', 'after', 'before', 'mobileLeft', 'rainbow', 'effect', 'stretch', 'solid',
 		"iconRight", "icon", "onNumber", "noButtons", "container", "incremental", "max", "min", "containerClassName",
-		"nw" ,"nm", "actionHidden", "start", 'mobileLarge', 'noMobile'
+		"nw" ,"nm", "actionHidden", "start", 'mobileLarge', 'noMobile', 'containerOnClick'
 	];
 	const toFilter = [...insideProps, ...extraProps];
 	var filteredProps = {}
@@ -44,6 +44,22 @@ export function mainClasses(props){
 		'no-border': props.noBorder
 	}
 }
+
+export function refHandler(currentRef, forwardRef) {
+	return function (e) {
+		var refs = [currentRef, forwardRef];
+		for(var ref of refs) {
+			if(ref) {
+				if(typeof ref === "function") {
+					ref(e);
+				}
+				if(ref.hasOwnProperty('current')) {
+					ref.current = e;
+				}
+			}
+		}
+	}
+};
 
 export function classNames() {
   

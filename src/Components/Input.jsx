@@ -8,7 +8,6 @@ import Group from './Group';
 import PropTypes, { func } from 'prop-types';
 import useController from '../Hooks/useController';
 
-//This needs some code cleanup
 const Input = React.forwardRef((props,ref) => {
 	const inputType = props.type || 'text';
 
@@ -20,10 +19,18 @@ const Input = React.forwardRef((props,ref) => {
 
 	var passProps = filterProps(props,["className"]);
 
-	const icon = (props.icon ? <Icon className={props.iconClassName} name={props.icon}></Icon> : ''),
-		before = (props.before || icon ? <div className='element-action before'>{props.before || icon}</div> : ''),
-		after = (props.after ? <div className='element-action after'>{props.after}</div> : null),
-		overlay = (props.overlay ? <div className='ez-input-overlay'>{props.overlay}</div> : null);
+	const icon = props.icon && (
+		<Icon className={props.iconClassName} name={props.icon}></Icon>
+	),
+		before = (props.before || icon) && (
+				<div className='element-action before'>{props.before || icon}</div>
+		),
+		after = props.after && (
+			<div className='element-action after'>{props.after}</div>
+		),
+		overlay = props.overlay && (
+			<div className='ez-input-overlay'>{props.overlay}</div>
+		);
 	
 	
 	const effect = isValidEffect(props.effect);
@@ -37,18 +44,18 @@ const Input = React.forwardRef((props,ref) => {
 		if(e.target !== inputElement.current) {
 			return inputElement.current.click();
 		}
-	}
+	};
 	
-	const keyDown = function(e){
+	const keyDown = function (e) {
 		if(e.keyCode == 13) {
-			if(typeof props.onEnter === "function"){
+			if(typeof props.onEnter === "function") {
 				props.onEnter(e);
 			}
 		}
-		if(typeof props.onKeyDown === "function"){
+		if(typeof props.onKeyDown === "function") {
 			return props.onKeyDown(e);
 		}
-	}
+	};
 
 	const handleRef = (e) => {
 		inputElement.current = e;
@@ -63,33 +70,30 @@ const Input = React.forwardRef((props,ref) => {
 	};
 
 	var elements = {
-		'file': {
+		file: {
 			class: 'input-file',
 			noBefore: true,
 			noAfter: true,
 			before: () => (<div className='input-mask'></div>),
 			after: () => (props.children)
 		},
-	
-		'text': {
+		text: {
 			class: 'input-text'
 		},
-
-		'password': {
+		password: {
 			class: 'input-password'
 		},
-
-		'email': {
+		email: {
 			class: 'input-email',
 			props: {
 				inputmode: 'email'
 			}
 		},
-		'number': {
+		number: {
 			type: 'text'
 		},
-		'checkbox': {
-			props:{
+		checkbox: {
+			props: {
 				id: 'checkbox_' + Math.round(Math.random() * 1e6).toString(),
 				value: props.value || 'true'
 			},
@@ -102,9 +106,8 @@ const Input = React.forwardRef((props,ref) => {
 				</label>
 			)
 		},
-		
-		'radio': {
-			props:{
+		radio: {
+			props: {
 				id: 'radiobox_' + Math.round(Math.random() * 1e6).toString(),
 				value: props.value || (typeof props.children === "string" ? props.children : null)
 			},
@@ -113,18 +116,22 @@ const Input = React.forwardRef((props,ref) => {
 			class: 'input-radiobox',
 			after: () => (<label htmlFor={elements.radio.props.id}>{props.children || props.value}</label>)
 		}
-	}
+	};
 
 	const element = elements[props.type] || elements['text'],
-		type = elements[inputType] && elements[inputType].type ? elements[inputType].type : inputType;
+		type = elements[inputType] && elements[inputType].type ?
+			elements[inputType].type :
+			inputType;
 	
 	if(element.props){
-		passProps = {...passProps, ...element.props}
+		passProps = {
+			...passProps,
+			...element.props
+		};
 	}
 
-	
-
-	const className = classNames('ez-input-element',
+	const className = classNames(
+		'ez-input-element',
 		element.class,
 		effect,
 		props.containerClassName,
@@ -139,34 +146,59 @@ const Input = React.forwardRef((props,ref) => {
 		}
 	);
 
-	const inputClassName = classNames("ez-input", props.className, mainClasses(props));
+	const inputClassName = classNames(
+		"ez-input",
+		props.className,
+		mainClasses(props)
+	);
 	
 
-	const needContainer = (overlay || before || after || icon || element.before || element.after || props.container);
+	const needContainer = (
+		props.container ||
+		element.before ||
+		element.after ||
+		overlay ||
+		before ||
+		after ||
+		icon
+	);
 
-	const inputContainer = needContainer ? (
-		<div onClick={clickHandler} className={className}>
-			{
-				before && !element.noBefore ? before : null
-			}
-			{
-				element.before ? element.before() : null
-			}
-			<input {...passProps} type={type} ref={handleRef} className={inputClassName + " ez-input-wrapped"} onKeyDown={keyDown} />
-			{
-				element.after ? element.after() : null
-			}
-			{
-				after && !element.noAfter ? after : null
-			}
-			{overlay}
-		</div>
-	) : <input {...passProps} type={type} ref={handleRef} className={inputClassName}/>;
+	const inputContainer = needContainer ?
+		(
+			<div
+				onClick={clickHandler}
+				className={className}>
+				{
+					before && !element.noBefore && before
+				}
+				{
+					element.before && element.before()
+				}
+				<input
+					{...passProps}
+					type={type}
+					ref={handleRef}
+					className={inputClassName + " ez-input-wrapped"}
+					onKeyDown={keyDown}
+				/>
+				{
+					element.after && element.after()
+				}
+				{
+					after && !element.noAfter && after
+				}
+				{overlay}
+			</div>
+		) :
+		<input
+			{...passProps}
+			type={type}
+			ref={handleRef}
+			className={inputClassName}
+		/>;
 
-	
 	return inputContainer;
 });
-
 
 Input.List = Input.Multi = function(props){ //eslint-disable-line
 
@@ -460,9 +492,6 @@ Input.Number = React.forwardRef((props, ref) => { //eslint-disable-line
 		}
 	}, []);
 
-
-	
-	
 	const minus = props.noButtons ? null : (
 		<div className='element-action'>
 			<Icon className={props.iconClassName} name='minus-square' onClick={handleMinus} />

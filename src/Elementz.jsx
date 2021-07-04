@@ -31,6 +31,7 @@ import Select from './Components/Select';
 import Switch from './Components/Switch';
 import Group from './Components/Group';
 import Table from './Components/Table';
+import Textarea from './Components/Textarea';
 import {Row, Col} from './Components/Bootstrap';
 
 /**
@@ -57,7 +58,7 @@ import './Style/Effects.scss';
 
 
 export {
-	Menu, Modal, Dropdown, Button, Input, Radio, Table, Group, Switch,
+	Menu, Modal, Dropdown, Button, Input, Radio, Table, Group, Switch, Textarea,
 	Loading, Icon, Nav, Select, Alert, Progress, Box, Badge, Row, Col,
 	useLocalStorage, useModal, usePrevious, useScript, useOutside,	useMultiState,
 	useComponentWillMount, useRouter, useHistory, RouterProvider, getHistory,

@@ -338,7 +338,7 @@ const TableFooter = function (props) {
 	)
 }
 
-function Table(props) {
+const Table = React.forwardRef((props, ref) => {
 	
 	const options = props;
 
@@ -402,7 +402,7 @@ function Table(props) {
 		columns_keys = Object.keys(columns),
 		isLoading = options.loading || loading,
 		scroll = (options.scrollable && !options.paginate) ? (/^([0-9]+(px|%)?|auto)$/.test(options.scrollable) ? options.scrollable : '100%') : false,
-		scrollRowHeight = (scroll && options.scrollRowHeight && /^[0-9]+(px)?$/.test(options.scrollRowHeight) ? options.scrollRowHeight : false), 
+		scrollRowHeight = (scroll && options.scrollRowHeight && /^[0-9]+(px)?$/.test(options.scrollRowHeight) ? options.scrollRowHeight : false),
 		defaultScrollRowHeight = 50,
 		hasBeforeColumn = (options.selectable || options.expandable),
 		hasAfterColumn = (options.onAction),
@@ -611,7 +611,7 @@ function Table(props) {
 			limit
 		}
 		
-	}, [ParseData, ParseData.data,  filters.allowed, filters, search, sorting.type, sorting.column, options.searchable, options.onSort, options.columns]);
+	}, [ParseData, ParseData.data, filters.allowed, filters, search, sorting.type, sorting.column, options.searchable, options.onSort, options.columns]);
 
 	const PaginateData = useMemo(() => {
 		if(isRemote) {
@@ -650,7 +650,7 @@ function Table(props) {
  
 	const {
 		data,
-		data_indexed, 
+		data_indexed,
 		filter,
 		filtered,
 		filtered_indexed,
@@ -661,119 +661,119 @@ function Table(props) {
 		end,
 		paginated,
 		formatFilters
-	} = useMemo(()=>{
-			if(!isRemote) {
-				return {
-					...ParseData,
-					...FilterData,
-					...PaginateData
-				}
+	} = useMemo(() => {
+		if(!isRemote) {
+			return {
+				...ParseData,
+				...FilterData,
+				...PaginateData
 			}
+		}
 			
-			var [remoteData, remoteTotal] = [remote.data, remote.total];
+		var [remoteData, remoteTotal] = [remote.data, remote.total];
 
-			const
-				data_indexed = remoteData.reduce((o, v, i) => {
-					var _row = ((typeof options.format === "function") ? options.format(v, i) : v);
-					var row = !options.columnOrder ? { ..._row } : Object.keys(_row).sort((a, b) => (
-						columns_keys.indexOf(a) - columns_keys.indexOf(b)
-					)).reduce((o, v, i) => ({
-						...o,
-						[v]: _row[v]
-					}), {});
+		const
+			data_indexed = remoteData.reduce((o, v, i) => {
+				var _row = ((typeof options.format === "function") ? options.format(v, i) : v);
+				var row = !options.columnOrder ? { ..._row } : Object.keys(_row).sort((a, b) => (
+					columns_keys.indexOf(a) - columns_keys.indexOf(b)
+				)).reduce((o, v, i) => ({
+					...o,
+					[v]: _row[v]
+				}), {});
 					
-					var index = md0(data_index + i);
-					o[index] = row;
-					Object.defineProperty(o[index], "__ez__", {
-						enumerable: false,
-						writable: false,
-						value: {
-							index: index,
-							originalIndex: i,
-						}
-					});
+				var index = md0(data_index + i);
+				o[index] = row;
+				Object.defineProperty(o[index], "__ez__", {
+					enumerable: false,
+					writable: false,
+					value: {
+						index: index,
+						originalIndex: i,
+					}
+				});
+				return o;
+			}, {}),
+			data = Object.values(data_indexed),
+			filterValues = !options.filterable ? {} : columns_keys.reduce((o, name, i) => {
+				if(!columns[name].filter || !columns[name].filter.options) {
 					return o;
-				},{}),
-				data = Object.values(data_indexed),
-				filterValues = !options.filterable ? {} : columns_keys.reduce((o, name, i) => {
-					if(!columns[name].filter || !columns[name].filter.options) {
-						return o;
-					}
+				}
 				
-					var options = (Array.isArray(columns[name].filter.options) ? columns[name].filter.options :
-						(columns[name].filter.options.__proto__.constructor.name == "Object" ? Object.keys(columns[name].filter.options) : null));
+				var options = (Array.isArray(columns[name].filter.options) ? columns[name].filter.options :
+					(columns[name].filter.options.__proto__.constructor.name == "Object" ? Object.keys(columns[name].filter.options) : null));
 				
-					if(!options) {
-						return o;
-					}
-
-					o[name] = {
-						options: options,
-						multiple: columns[name].filter.multiple,
-						custom: columns[name].filter.custom,
-						allowEquals: columns[name].filter.negative
-					}
-
+				if(!options) {
 					return o;
+				}
 
-				}, {}),
-				filter = {
+				o[name] = {
+					options: options,
+					multiple: columns[name].filter.multiple,
+					custom: columns[name].filter.custom,
+					allowEquals: columns[name].filter.negative
+				}
+
+				return o;
+
+			}, {}),
+			filter = {
 				all: filterValues,
 				allowed: Object.keys(filterValues)
-				},
-				filtered = data,
-				filtered_indexed = data_indexed,
-				filtered_indexed_keys = Object.keys(data_indexed),
-				paginated = data,
-				total = (remoteTotal || options.total || 0),
-				limit = (options.limit || total),
-				start = scroll ? data.length : (Math.max(0, (page - 1)) * limit),
-				end = (start + limit) > total ? total : (start + limit),
-				formatFilters = Object.keys(filters).reduce(
-					(o, v, i) => {
-						if(!filters[v] || !Object.keys(filters[v]).length) {
-							return o;
-						}
-
-						o[v] = Object.keys(filters[v]).reduce((o, x, i) => {
-							var equals = !filters[v][x] ? "negative" : "positive";
-							o[equals].push(x);
-							return o;
-
-						}, {
-							"positive": [],
-							"negative": []
-						});
-
+			},
+			filtered = data,
+			filtered_indexed = data_indexed,
+			filtered_indexed_keys = Object.keys(data_indexed),
+			paginated = data,
+			total = (remoteTotal || options.total || 0),
+			limit = (options.limit || total),
+			start = scroll ? data.length : (Math.max(0, (page - 1)) * limit),
+			end = (start + limit) > total ? total : (start + limit),
+			formatFilters = Object.keys(filters).reduce(
+				(o, v, i) => {
+					if(!filters[v] || !Object.keys(filters[v]).length) {
 						return o;
-					},
-					{}
-				);
+					}
 
-			const result = {
-				data,
-				data_indexed,
-				filter,
-				filtered,
-				filtered_indexed,
-				filtered_indexed_keys,
-				total,
-				limit,
-				start,
-				end,
-				paginated,
-				formatFilters
-			}
+					o[v] = Object.keys(filters[v]).reduce((o, x, i) => {
+						var equals = !filters[v][x] ? "negative" : "positive";
+						o[equals].push(x);
+						return o;
 
-			return result;
+					}, {
+						"positive": [],
+						"negative": []
+					});
 
-		}, [
-			remote, isRemote,
-			ParseData, FilterData, ParseData,
-			page, filters, search, sorting,
-			options.filterable, options.searchable, options.sortable, options.total, options.limit,
-			options.paginate, options.scrollable, options.columnOrder,
-			columns
+					return o;
+				},
+				{}
+			);
+
+		const result = {
+			data,
+			data_indexed,
+			filter,
+			filtered,
+			filtered_indexed,
+			filtered_indexed_keys,
+			total,
+			limit,
+			start,
+			end,
+			paginated,
+			formatFilters
+		}
+
+		return result;
+
+	}, [
+		remote, isRemote,
+		ParseData, FilterData, ParseData,
+		page, filters, search, sorting,
+		options.filterable, options.searchable, options.sortable, options.total, options.limit,
+		options.paginate, options.scrollable, options.columnOrder,
+		columns
 	]);
 	
 
@@ -828,7 +828,7 @@ function Table(props) {
 				})
 				.then(() => {
 					setLoading(false);
-					setSelected([], [[],[]], false);
+					setSelected([], [[], []], false);
 				});
 		}
 	}, [isRemote, options.data, filters, search, sorting, scroll, scrollFinish, remote])
@@ -868,11 +868,11 @@ function Table(props) {
 				.then(() => {
 					setLoading(false);
 					
-					setSelected([], [[],[]], false);
+					setSelected([], [[], []], false);
 				});
 			
 		}
-	},[isRemote, options.data, start, end, filters, search, sorting, scroll, isCache, data_index])
+	}, [isRemote, options.data, start, end, filters, search, sorting, scroll, isCache, data_index])
 	
 	useEffect(() => {
 		const handleResize = function (e) {
@@ -996,12 +996,12 @@ function Table(props) {
 		
 		const scrollHeight = isNaN(parseInt(scroll)) ? 100 : parseInt(scroll);
 
-		if(!scrollFinish && e.currentTarget && ((e.currentTarget.scrollTop + e.currentTarget.clientHeight + scrollHeight)  >= e.currentTarget.scrollHeight)) {
+		if(!scrollFinish && e.currentTarget && ((e.currentTarget.scrollTop + e.currentTarget.clientHeight + scrollHeight) >= e.currentTarget.scrollHeight)) {
 			setScrollFinish(true);
 		}
 	}
 	
-	const handleRowSelect = function (row, originalIndex, customIndex, e) {	
+	const handleRowSelect = function (row, originalIndex, customIndex, e) {
 		var updateSelected = !~selected.indexOf(customIndex) ? [
 			...selected,
 			customIndex
@@ -1071,47 +1071,47 @@ function Table(props) {
 			}
 			value={
 				selected.length > 0 ? numberWithCommas(selected.length) + ' Selected' : ''
-			}	
+			}
 		/>
 	
 	);
 
 	const actionsAll = (
 		<div className="ez-column-actions">
-				{
-					options.onAction && (typeof options.onAction === "function") && options.selectable && selected.length > 0 ?
-						options.onAction(
-							selected.map((i) => (data_indexed[i])), //rows
-							selected.map((i) => (
-								data_indexed[i] ?
-									data_indexed[i].__ez__.originalIndex :
-									-1)
-							), //indexes
-							true //isBulk
-						)
-						: null
-				}
+			{
+				options.onAction && (typeof options.onAction === "function") && options.selectable && selected.length > 0 ?
+					options.onAction(
+						selected.map((i) => (data_indexed[i])), //rows
+						selected.map((i) => (
+							data_indexed[i] ?
+								data_indexed[i].__ez__.originalIndex :
+								-1)
+						), //indexes
+						true //isBulk
+					)
+					: null
+			}
 		</div>
 	)
 
 
 	const selectRow = (row, originalIndex, customIndex) => (
-			<Input
-				key={`ez-select-row-check-${customIndex}`}
-				secondary
-				type="checkbox"
-				checked={~selected.indexOf(customIndex)}
-				onChange={(e) => (
-						handleRowSelect(row, originalIndex, customIndex, e)
-				)}
-			/>
+		<Input
+			key={`ez-select-row-check-${customIndex}`}
+			secondary
+			type="checkbox"
+			checked={~selected.indexOf(customIndex)}
+			onChange={(e) => (
+				handleRowSelect(row, originalIndex, customIndex, e)
+			)}
+		/>
 	);
 
 	const expandRow = (row, originalIndex, customIndex) => (
 		<Icon
 			name={
 				!expanded[customIndex]
-				? 'chevron-right' : 'chevron-down'
+					? 'chevron-right' : 'chevron-down'
 			}
 			className='ez-expand-icon'
 			onClick={(e) => (
@@ -1119,7 +1119,7 @@ function Table(props) {
 			)}
 		>
 
-		</Icon>	
+		</Icon>
 	)
 	
 	const beforeColumn = (
@@ -1137,7 +1137,7 @@ function Table(props) {
 				}
 				{
 					options.selectable && !selected.length ?
-					 selectAll 
+						selectAll
 						: null
 				}
 				
@@ -1176,7 +1176,7 @@ function Table(props) {
 			<div className="ez-row-actions">
 				{
 					options.onAction && (typeof options.onAction === "function") ?
-						options.onAction([data_indexed[originalIndex]], [originalIndex])
+						options.onAction([data_indexed[customIndex]], [originalIndex])
 						: null
 				}
 			</div>
@@ -1194,7 +1194,7 @@ function Table(props) {
 				options.selectable ? (selected.length === filtered_indexed_keys.length ?
 					"Unselect All"
 					: "Select All") : ""
-				}
+			}
 			>
 				{selectAll}
 			</div>
@@ -1202,7 +1202,7 @@ function Table(props) {
 		</div>
 	);
 
-	const renderColumns = function () {		
+	const renderColumns = function () {
 		const mainClassname = classNames(
 			"ez-columns",
 			{
@@ -1275,7 +1275,7 @@ function Table(props) {
 
 	const getRowProps = (row, originalIndex, customIndex) => {
 		var className = classNames(
-			'ez-row',	
+			'ez-row',
 			`ez-r-${originalIndex}`,
 			{
 				'ez-row-custom': isCustom,
@@ -1338,7 +1338,7 @@ function Table(props) {
 					}
 					className='ez-expand-icon'
 					
-					/>
+				/>
 			</div>
 		) : null;
 
@@ -1349,7 +1349,7 @@ function Table(props) {
 				{...rowProps}
 				ref={(e) => (
 					handleScrollRowHeight(e, paginatedIndex)
-				)}	
+				)}
 				key={`ez-row-custom-${originalIndex}`}
 			>
 				<td
@@ -1421,7 +1421,7 @@ function Table(props) {
 
 	const renderAppliedFilters = Object.keys(filters).flatMap((column) => (
 		Object.keys(filters[column]).map((value, i) => (
-			<div key={"ez-af-"+column+i} className="ez-af">
+			<div key={"ez-af-" + column + i} className="ez-af">
 				<span className="ez-af-name">{columns[column].title || capitalize(column)}</span>
 				<span className="ez-af-equals">{filters[column][value] ? 'is' : 'is not'}</span>
 				<span className="ez-af-value">{capitalize(value)}</span>
@@ -1441,7 +1441,7 @@ function Table(props) {
 					});
 		
 					setPage(1, [1], false);
-					setSelected([], [[],[]], false);
+					setSelected([], [[], []], false);
 
 				}} name="close" />
 			</div>
@@ -1453,7 +1453,7 @@ function Table(props) {
 			<td colSpan={colSpan}>
 				<div className='ez-empty-table'>{isLoading ? (
 					<Loading center />
-					) : options.empty}
+				) : options.empty}
 				</div>
 			</td>
 		</tr>
@@ -1480,30 +1480,30 @@ function Table(props) {
 			(i) => (
 				data_index + i
 			)
-		,[data_index]),
+			, [data_index]),
 		overscan: 10,
 		scrollToFn: useCallback((offset, defaultScrollTo) => {
 			const duration = 1000;
 			const start = tableContainer.current.scrollTop;
 			const startTime = (scrollingRef.current = Date.now());
 			
-			const easeInOutQuint = function(t) {
+			const easeInOutQuint = function (t) {
 				return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
 			}
 			  
 			const run = () => {
-			  if (scrollingRef.current !== startTime) return;
-			  const now = Date.now();
-			  const elapsed = now - startTime;
-			  const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
-			  const interpolated = start + (offset - start) * progress;
+				if(scrollingRef.current !== startTime) return;
+				const now = Date.now();
+				const elapsed = now - startTime;
+				const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
+				const interpolated = start + (offset - start) * progress;
 		
-			  if (elapsed < duration) {
-				defaultScrollTo(interpolated);
-				requestAnimationFrame(run);
-			  } else {
-				defaultScrollTo(interpolated);
-			  }
+				if(elapsed < duration) {
+					defaultScrollTo(interpolated);
+					requestAnimationFrame(run);
+				} else {
+					defaultScrollTo(interpolated);
+				}
 			};
 		
 			requestAnimationFrame(run);
@@ -1559,6 +1559,7 @@ function Table(props) {
 
 	return (
 		<div className={className} style={{
+			...(props.style || {}),
 			height: options.height
 		}}>
 			<div className="ez-tools">
@@ -1568,6 +1569,7 @@ function Table(props) {
 							<div className="ez-add-filter">
 								<Dropdown
 									arrow
+									left
 									mobileLarge
 									handle={
 										<Button
@@ -1595,20 +1597,20 @@ function Table(props) {
 									</div>
 								</Dropdown>
 							</div>
-						: null
+							: null
 					}
 				
 					{
-						options.searchable ? 
+						options.searchable ?
 							<div className="ez-search">
 								<Input
 									secondary lg auto type='text'
 									disabled={!isRemote && (!paginated || !paginated.length) && !search}
 									placeholder='Search'
 									className='form-control' before={
-									<Icon name='search' />
-								}
-								onChange={handleSearch} />
+										<Icon name='search' />
+									}
+									onChange={handleSearch} />
 							</div>
 							: null
 					}
@@ -1647,9 +1649,9 @@ function Table(props) {
 						paddingTop: `${rowStartSize}px`,
 						width: '100%',
 						position: 'relative',
-					  } : null}
+					} : null}
 				>
-					<table>
+					<table ref={ref}>
 						{hasBeforeColumn ?
 							(
 								<colgroup>
@@ -1660,7 +1662,7 @@ function Table(props) {
 									}
 								</colgroup>
 							)
-							 : null
+							: null
 						}
 						<thead>
 							{renderColumns}
@@ -1693,7 +1695,7 @@ function Table(props) {
 			<TableFooter {...passState} />
 		</div>
 	);
-}
+});
 
 Table.defaultProps = {
 	data: [],

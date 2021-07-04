@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 const RadioContext = React.createContext(null);
 
 
-function Radio(props) {
+const Radio = React.forwardRef((props, ref) => {
 	const { name } = props;
 	const type = (props.type || "bar");
 	const lastSelected = useRef(null);
@@ -21,7 +21,7 @@ function Radio(props) {
 	const [direction, setDirection] = useState('');
 
 	const forwardChange = (value, e) => (
-		typeof props.onChange === "function" ? (props.onChange(value, e) !==false) : true
+		typeof props.onChange === "function" ? (props.onChange(value, e) !== false) : true
 	);
 
 	var className = classNames("ez-radio", `ez-radio-${type}`,
@@ -44,16 +44,20 @@ function Radio(props) {
 		}
 	);
 
-	var passProps = filterProps(props, ["name", "defaultSelected", "setSelected","solid", "space","type"]);
+	var passProps = filterProps(props, ["name", "defaultSelected", "setSelected", "solid", "space", "type"]);
 	
 	return (
 		<RadioContext.Provider value={[active, setActive, name, lastSelected, setDirection, forwardChange]}>
-			<div {...passProps} className={className} >
+			<div {...passProps}
+				className={className}
+				ref={ref}
+			>
 				{props.children}
 			</div>
 		</RadioContext.Provider>
 	)
-}
+});
+
 //eslint-disable-next-line
 Radio.Item = function (props) {
 	//eslint-disable-next-line

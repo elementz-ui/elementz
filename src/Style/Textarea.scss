@@ -1,0 +1,39 @@
+$themes: primary, secondary, danger, success, warning, info;
+$sizes: sm, md, lg, xl;
+
+.ez-textarea{
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--border-radius);
+	padding: 10px;
+	min-height: 120px;
+	&.sm{
+		min-height: 80px;
+	}
+	&.lg{
+		min-height: 160px;
+	}
+	&.xl{
+		min-height: 240px;
+	}
+	&.full{
+		width: 100%;
+	}
+
+	&[disabled], &.disabled{
+		cursor: not-allowed;
+		opacity: .7;
+	}
+	&:focus{
+		border-bottom: var(--border-width) solid rgba(var(--text-code),0.225);
+	}
+	&.active{
+		box-shadow: inset 0 0 0 50px rgba(var(--text-code),0.05), var(--shadow-input);
+		
+		@each $theme in $themes {
+			&.#{$theme} {
+				border-color: #{"var(--" + $theme + ")"};
+				color: #{"var(--" + $theme + ")"};
+			}
+		}
+	}
+}

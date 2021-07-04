@@ -3,8 +3,8 @@ import React from 'react';
 import { classNames, filterProps } from '../Functions/Functions';
 import '../Assets/flag-icon.min.css';
 
-function Flag(props) {
 
+const Flag = React.forwardRef((props, ref) => {
 	const country = (props.name || props.iso || props.country || props.code);
 	
 	if(!country) {
@@ -16,7 +16,11 @@ function Flag(props) {
 	});
 
 	const passProps = filterProps(props, ['name', 'className', 'country', 'iso', 'code']);
-	return <span {...passProps} className={className} />
-}
+	
+	return (
+		<span {...passProps} className={className} ref={ref} />
+	);
+});
+
 
 export default Flag;

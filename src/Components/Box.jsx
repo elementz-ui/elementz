@@ -3,9 +3,6 @@ import React from 'react';
 import { filterProps, classNames } from '../Functions/Functions';
 import "./../Style/Box.scss";
 
-
-
-
 function Box(props) {
 	
 	const head = props.head || props.header;
@@ -45,8 +42,10 @@ function Box(props) {
 		}
 	)
 
+	const passProps = filterProps(props, ['title']);
+
 	return (
-		<div className={className}>
+		<div {...passProps} className={className}>
 			{head ?
 				<div className={headerClassName}>{head}</div>
 				: null

@@ -75,6 +75,11 @@ module.exports = {
     {
       name: 'Customization',
       content: './docs/Customization.md'
+    },
+    {
+      name: 'Icons',
+      external: true,
+      href: 'https://www.zwicon.com/cheatsheet.html'
     }
   ],
   webpackConfig: {
