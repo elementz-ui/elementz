@@ -281,7 +281,7 @@ var Toaster = function () {
 	
 	Toastify.reposition = function () {
   
-		
+
 		var topLeftOffsetSize = {
 			top: 15,
 			bottom: 15,

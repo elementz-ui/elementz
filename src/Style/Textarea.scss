@@ -6,26 +6,49 @@ $sizes: sm, md, lg, xl;
 	border-radius: var(--border-radius);
 	padding: 10px;
 	min-height: 120px;
+
 	&.sm{
 		min-height: 80px;
 	}
+
 	&.lg{
 		min-height: 160px;
 	}
+
 	&.xl{
 		min-height: 240px;
 	}
-	&.full{
+
+	&.auto, .full{
 		width: 100%;
+	}
+
+	&.no-border{
+		border: none;
+		border-radius: 0px;
+	}
+
+	&.no-resize{
+		resize: none;
+	}
+
+	&.vertical-resize{
+		resize: vertical;
+	}
+
+	&.horizontal-resize{
+		resize: horizontal;
 	}
 
 	&[disabled], &.disabled{
 		cursor: not-allowed;
 		opacity: .7;
 	}
+
 	&:focus{
 		border-bottom: var(--border-width) solid rgba(var(--text-code),0.225);
 	}
+	
 	&.active{
 		box-shadow: inset 0 0 0 50px rgba(var(--text-code),0.05), var(--shadow-input);
 		

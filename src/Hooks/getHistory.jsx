@@ -5,7 +5,7 @@ import { createBrowserHistory as createHistory } from "history";
 
 function getHistory() { // eslint-disable-line
 	const history = useMemo(() => (createHistory()), []); // eslint-disable-line
-	const [location, setLocation] = useState(window.location); // eslint-disable-line
+	const [location, setLocation] = useState(typeof window !== undefined ? window.location : null); // eslint-disable-line
 
 	// eslint-disable-next-line
 	useEffect(() => {

@@ -17,6 +17,11 @@ $sizes: sm, md, lg, xl;
     &.auto, &.full{
         width: 100%;
     }
+    &.ez-input-wrapped{
+        &[readonly]{
+            background: var(--background-input);
+        }
+    }
     &:not(.ez-input-wrapped){
         &[disabled], &.disabled{
             cursor: not-allowed;
@@ -148,8 +153,11 @@ select.ez-input{
 
     &.input-file {
         position: relative;
-        overflow: hidden;
         cursor: pointer;
+        width: fit-content;
+        &.full, &.auto{
+            width: 100%;
+        }
         input[type='file'] {
             position: absolute;
             width: -moz-fit-content;
@@ -158,28 +166,6 @@ select.ez-input{
             opacity: 0;
             top: -99999px;
             left: -99999px;
-        }
-        .input-mask {
-            position: absolute;
-            background: black;
-            z-index: 5;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-        
-            display: flex;
-            text-align: center;
-            justify-content: center;
-            vertical-align: middle;
-            transition: .2s;
-            &:after {
-                content: '+';
-                color: rgba(255, 255, 255, 0.8);
-                font-size: 55px;
-            }
-            &:hover{
-                opacity: .5;
-            }
         }
         &.loading{
             cursor: progress;
@@ -223,7 +209,7 @@ select.ez-input{
               align-items: center;
             }
             & + label:before{
-                box-shadow: 0px 0px 1px 11px rgba(0,0,0,0), inset -2px 1px 5px rgb(0,0,0,0.03);
+                box-shadow: 0px 0px 1px 11px rgba(0,0,0,0), inset -2px 1px 5px rgba(0,0,0,0.03);
                 transition: .5s box-shadow;
             }
             &:hover + label:before {
@@ -356,6 +342,7 @@ select.ez-input{
             }
         }
     }
+
     &.input-number{
         justify-content: flex-start;
         display: flex;
@@ -387,7 +374,7 @@ select.ez-input{
     }
 
     /* States */
-    &.active{
+    &.active, &.readonly{
         box-shadow: inset 0 0 0 50px rgba(var(--text-code),0.05), var(--shadow-input);
         input{
             box-shadow: inset 0 0 0 50px rgba(var(--text-code),0.05);
@@ -402,6 +389,7 @@ select.ez-input{
             pointer-events: none;
         }
     }
+ 
 
     &.loading{
         &.disabled{
@@ -614,11 +602,22 @@ body.ez-dark {
 
 
 .ez-multi-input{
+    
+    &.full{
+        width: 100%;
+        .multi-item{
+            width: 100%;
+        }
+        .multi-items{
+            width: 100%;
+        }
+    }
+
     .multi-item{
         display: flex;
         align-items: center;
         padding: 12.5px;
-        padding-left: 25px;
+        padding-left: calc(15px + var(--sz-padding));
         &:hover{
             .multi-item-actions{
                 opacity: 1;
@@ -626,15 +625,18 @@ body.ez-dark {
         }
     }
     .multi-items {
-        border: var(--border);
+        border: var(--border-width) solid var(--border);
+        background: var(--background-input);
         border-top: none;
         margin-top: -2px;
         border-bottom-right-radius: var(--border-radius);
         border-bottom-left-radius: var(--border-radius);
     }
     .multi-item-text{
+        font-size: var(--sz-font);
+        color: var(--text);
         width: 100%;
-        opacity: .5;
+        opacity: .8;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -642,29 +644,18 @@ body.ez-dark {
         font-size: 14px;
         display: inline-block;
         &:hover{
-            opacity: .6;
+            opacity: 1;
         }
     }
     .multi-item-actions{
         opacity: 0;
         transition: .2s;
         i {
-           cursor: pointer;
-           &.icon-20{
-               font-size: 20px;
-           }
-           &.icon-25{
-               font-size: 25px;
-           }
-           &.icon-30{
-               font-size: 30px;
-           }
-           &.icon-bold{
-               font-weight: bold;
-           }
-            color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            font-size: var(--sz-icon-font);
+            color: var(--text-light);
             &:hover{
-                color: rgba(0, 0, 0, 0.8);
+                color: var(--text);
             }
         }
     }

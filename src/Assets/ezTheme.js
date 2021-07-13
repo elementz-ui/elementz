@@ -1,5 +1,8 @@
-window.EzTheme = {
+const EzThemeHelpers = {
 	initialize: function () {
+		if(window.document.querySelector(".ez-theme-initial")) {
+			return false; //Already initialized
+		}
 		var mode = window.localStorage.getItem('ez-mode'),
 			size = window.localStorage.getItem('ez-size'),
 			saver = document.head['insertAdjacentHTML'](
@@ -9,14 +12,14 @@ window.EzTheme = {
 						opacity:0; display:flex; position: absolute; left: -9999px; background: url('https://api.elementz.style/i.png');
 					}
 				</style>`) || document.body['insertAdjacentHTML']('beforeend', `<div class='ez-theme-initial'></div>`);
-		
+				
 		if(mode === 'dark') {
 			document.body.classList.add('ez-dark');
 		}
 		if(size !== 'md' && ['sm', 'lg', 'xl'].includes(size)) {
 			document.body.classList.add('ez-sz-' + size);
 		}
-		
+
 	},
 
 	toggleDarkMode: function () {
@@ -38,12 +41,12 @@ window.EzTheme = {
 
 		var sizesClasses = sizes.map((s) => ('ez-sz-' + s));
 		document.body.classList.remove(...sizesClasses);
-		
+
 		if(size === 'md') {
 			window.localStorage.removeItem('ez-size');
 			return true;
 		}
-		
+
 		document.body.classList.add('ez-sz-' + size);
 		window.localStorage.setItem('ez-size', size);
 		return true;
@@ -58,7 +61,12 @@ window.EzTheme = {
 	}
 };
 
+if(typeof window !== "undefined") {
+	window.EzTheme = EzThemeHelpers;
 
-window.addEventListener('DOMContentLoaded', (e) => {
-	window.EzTheme.initialize();
-});
+	window.addEventListener('DOMContentLoaded', (e) => {
+		window.EzTheme.initialize();
+	});
+}
+
+export default EzThemeHelpers;

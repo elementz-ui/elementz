@@ -12,7 +12,7 @@ function Box(props) {
 	const className = classNames(
 		"ez-box",
 		{
-			"ez-outside-header": props.title,
+			"ez-outside-header": props.open || props.out,
 			"full": props.full, //Full Height
 			"center": props.center,
 			"circle": props.circle,
@@ -21,7 +21,9 @@ function Box(props) {
 			'lg': props.lg || props.large,
 			'xl': props.xl || props.xlarge,
 			'no-shadow': props.noShadow,
-			'no-border': props.noBorder
+			'no-border': props.noBorder,
+			'join-bottom': props.join,
+			'join-right': props.joinRight
 		},
 		props.className
 	);
@@ -42,7 +44,7 @@ function Box(props) {
 		}
 	)
 
-	const passProps = filterProps(props, ['title']);
+	const passProps = filterProps(props, ['open', 'out', 'join','joinRight']);
 
 	return (
 		<div {...passProps} className={className}>

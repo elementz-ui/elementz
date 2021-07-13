@@ -4,11 +4,13 @@ import { classNames, filterProps, forwardClick, mainClasses } from '../Functions
 import useController from '../Hooks/useController';
 import "../Style/Switch.scss";
 import PropTypes from 'prop-types';
-
+import Label from './Label';
 
 const Switch = React.forwardRef((props, ref) => {
 	const [controller, setController, isControlled] = useController(props, 'checked', false);
-	
+
+	const hasLabel = (props.label || props.description);
+
 	const forwardChange = (e) => (
 		typeof props.onChange === "function" ? (props.onChange(e) !== false) : true
 	);
@@ -40,7 +42,7 @@ const Switch = React.forwardRef((props, ref) => {
 
 	const passProps = filterProps(props, ["defaultChecked", "setChecked", "on", "off", "name", 'onChange']);
 
-	return (
+	const switchInput = (
 		<div {...passProps}
 			onClick={handleClick}
 			className={className}
@@ -53,6 +55,15 @@ const Switch = React.forwardRef((props, ref) => {
 			<input className='invisible' type="checkbox" readOnly name={props.name} value={props.value} checked={controller} />
 		</div>
 	);
+
+	const labelContainer = hasLabel ? (
+		<Label {...props} className={props.containerClassName}>
+			{switchInput}
+		</Label>
+	) : switchInput;
+
+	return labelContainer;
+
 });
 
 Switch.propTypes = {

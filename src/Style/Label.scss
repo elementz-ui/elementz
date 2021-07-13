@@ -1,0 +1,29 @@
+.ez-input-labeled{ 
+    display: flex;
+    flex-direction: column;
+    font-size: var(--sz-font);
+    &.sm{
+        font-size: var(--sz-sm-font);
+    }
+    &.md{
+        font-size: var(--sz-md-font);
+    }
+    &.lg{
+        font-size: var(--sz-lg-font);
+    }
+    &.xl{
+        font-size: var(--sz-xl-font);
+    }
+    & > label {
+        margin-bottom: 2.5px;
+        color: var(--text);
+    }
+    & > small{
+        font-size: small;
+        margin-top: 2.5px;
+        color: rgba(var(--text-code), 0.55);
+    }
+    &.auto, &.full{
+        width: 100%;
+    }
+}

@@ -21,7 +21,10 @@ import {Button, Alert} from 'elementz';
 		iconRight='sad' 
 		onClick={()=> Alert.danger("So dangerous")}
 		>I'm dangerous</Button>
-	<Button success>I'm successful</Button>
+	<Button 
+		success
+		onClick={()=> Alert.success("Yes")}
+	>I'm successful</Button>
 </Button.Group>
 ```
 

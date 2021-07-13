@@ -24,6 +24,24 @@
 	.ez-input-group:not(.full){
 		width: auto;
 	}
+	
+	--item-width: initial;
+	&.ez-group-col-2{
+		--item-width: calc((100% / 2) - var(--box-spacing));
+	}
+	&.ez-group-col-3{
+		--item-width: calc((100% / 3) - var(--box-spacing));
+	}
+	&.ez-group-col-4{
+		--item-width: calc((100% / 4) - var(--box-spacing));
+	}
+	&.ez-group-col-5{
+		--item-width: calc((100% / 5) - var(--box-spacing));
+	}
+	&.ez-group-col-6{
+		--item-width: calc((100% / 6) - var(--box-spacing));
+	}
+
 	&.space{
 		
 
@@ -34,13 +52,15 @@
 			}
 			margin-top: calc(var(--box-spacing) * -1);
 
-			.ez-input-element,.ez-group-item, .ez-input-group, .ez-switch, .ez-nice-select, .ez-radio, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
+			.ez-input-labeled, .ez-input-element,.ez-group-item, .ez-input-group, .ez-switch, .ez-nice-select, .ez-radio, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
 				margin-top: var(--box-spacing);
 				&:not(:last-child){
 					margin-right: var(--box-spacing);
 				}
 			}
-			.ez-input-group, .ez-input-element, .d-handle, .ez-group-item {
+			.ez-input-group, .ez-input-element, .d-handle, .ez-group-item, .ez-input-labeled {
+				width: var(--item-width);
+
 				.ez-input-element, .ez-group-item, .ez-input:not(.ez-input-wrapped), .ez-switch, .ez-nice-select, .ez-radio, .d-handle, .ez-button, .ez-badge {
 					margin-top: unset;
 					margin-right: unset;
@@ -48,12 +68,12 @@
 			}
 		}
 		&.vertical {
-			.ez-input-element, .ez-group-item, .ez-input-group, .ez-switch, .ez-nice-select, .ez-radio, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
+			.ez-input-labeled, .ez-input-element, .ez-group-item, .ez-input-group, .ez-switch, .ez-nice-select, .ez-radio, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
 				&:not(:last-child){
 					margin-bottom: var(--box-spacing);
 				}
 			}
-			.ez-input-group, .ez-input-element, .d-handle, .ez-group-item {
+			.ez-input-group, .ez-input-element, .d-handle, .ez-group-item, .ez-input-labeled {
 				.ez-input-element, .ez-group-item, .ez-switch, .ez-nice-select, .ez-radio, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
 					margin-bottom: unset;
 				}
@@ -65,7 +85,7 @@
 	&:not(.space){
 
 		&:not(.vertical){
-    		.ez-input-element, .ez-group-item, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
+    		.ez-input-labeled, .ez-input-element, .ez-group-item, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
 				&:not(:only-child){
 					&:not(:first-child):not(:last-child){
     		    	    border-radius: 0px;
@@ -90,7 +110,7 @@
 		}
 
 		&.vertical {
-			.ez-input-element, .ez-group-item, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
+			.ez-input-labeled, .ez-input-element, .ez-group-item, .ez-input:not(.ez-input-wrapped), .d-handle, .ez-button, .ez-badge {
     		    &:not(:first-child):not(:last-child){
     		        border-radius: 0px;
     		        &:not(button.active):not(button:hover) {
@@ -149,5 +169,13 @@
 	}
 	&.nw{
 		flex-wrap: nowrap;
+	}
+}
+
+@media (max-width: 768px){
+	.ez-input-group{
+		.ez-group-col-2, .ez-group-col-3, .ez-group-col-4, .ez-group-col-5, .ez-group-col-6 {
+			--item-width: 100%;
+		}
 	}
 }

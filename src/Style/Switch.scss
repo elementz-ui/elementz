@@ -2,6 +2,7 @@ $themes: secondary, primary, info, warning, danger, success;
 
 .ez-switch {
 	--switch-width: var(--sz-circle);
+	--switch-text: 8px;	
 	&.sm{
 		height: var(--sz-sm-mini);
 		--switch-width: var(--sz-sm-circle);

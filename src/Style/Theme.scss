@@ -72,16 +72,19 @@
 	--green-light: #cfffcf;
 	--green-x-light: #eaf8ea;
 	
+	--black-x-light: rgba(0,0,0,0.1);
+	--black-light:  rgba(93,93,93);
+	--black: rgba(0,0,0,1);
+	--black-code: 0,0,0;
 
-	--black: #1a1a1a;
-	--black-light: #383838;
-	--black-x-light: #c9c9c9;
-	
 	--grey: #8c8c8c;
 	--grey-dark: #626262;
 
-	--white: #fff;
-
+	--white-x-light: rgba(255,255,255,0.05);
+	--white-light: rgba(255,255,255,0.3);
+	--white: rgba(255,255,255,1);
+	--white-code: 255,255,255;
+	
 	--success: var(--green);
 	--success-code: var(--green-code);
 	--success-light: var(--green-light);

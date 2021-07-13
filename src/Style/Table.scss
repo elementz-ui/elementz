@@ -1,5 +1,7 @@
 .ez-table {
     position: relative;
+    display: flex;
+    flex-direction: column;
     height: auto;
     border-radius: var(--border-radius);
     padding: 10px;

@@ -27,11 +27,14 @@ function useController(props, getter="active", defaultState, onChange) {
 	const wrappedSetter = useCallback(((onChange &&
 		typeof onChange === "string" &&
 		typeof props[onChange] === "function") ?
-		(newValue, onChangeParams, preventChangeOnFalse = true) => {
+		async (newValue, onChangeParams, preventChangeOnFalse = true) => {
 		
 			var onChangeParams = Array.isArray(onChangeParams) ? onChangeParams : [newValue];
-			
-			if(props[onChange](...onChangeParams) === false && preventChangeOnFalse) {
+			var listenerResponse = await Promise.resolve(
+				props[onChange](...onChangeParams)
+			);
+
+			if(listenerResponse === false && preventChangeOnFalse) {
 				return false;
 			}
 

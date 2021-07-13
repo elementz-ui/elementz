@@ -7,19 +7,41 @@
     -webkit-background-clip: padding;
     -moz-background-clip: padding;
     background-clip: padding-box;
-    background: var(--background-light);
-    box-shadow: var(--shadow);
+    
     &.no-shadow{
         box-shadow: none;
     }
     &.no-border{
         border: none;
     }
+
+    &.join-bottom{
+        margin-bottom: 0px !important;
+        & + .ez-box{
+            border-top: none;
+            border-top-right-radius: 0px;
+            border-top-left-radius: 0px;
+        }
+    }
+
+    &.join-right{
+        & + .ez-box{
+            border-left: none;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+    }
+
+
     &:not(.ez-outside-header){
+        background: var(--background-light);
+        box-shadow: var(--shadow);
         border-radius: var(--border-radius);
         border: var(--border-width) solid var(--border);
         .ez-box-body{
           border: none;
+          box-shadow: none;
+          background: initial;
         }
     }
     &.sm{
@@ -59,6 +81,8 @@
     }
 
     .ez-box-body{
+        background: var(--background-light);
+        box-shadow: var(--shadow);
         border-radius: var(--border-radius);
         border: var(--border-width) solid var(--border);
         padding: var(--box-padding);

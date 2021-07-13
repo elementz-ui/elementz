@@ -5,6 +5,7 @@ import { classNames, filterProps, isValidEffect, mainClasses } from '../Function
 import Icon from './Icon';
 import "./../Style/Input.scss";
 import Group from './Group';
+import Label from './Label';
 import PropTypes, { func } from 'prop-types';
 import useController from '../Hooks/useController';
 
@@ -17,13 +18,13 @@ const Input = React.forwardRef((props,ref) => {
 	
 	const inputElement = useRef(null);
 
-	var passProps = filterProps(props,["className"]);
+	var passProps = filterProps(props,["className","wrapperClassName","label", "description"]);
 
 	const icon = props.icon && (
 		<Icon className={props.iconClassName} name={props.icon}></Icon>
 	),
 		before = (props.before || icon) && (
-				<div className='element-action before'>{props.before || icon}</div>
+			<div className='element-action before'>{props.before || icon}</div>
 		),
 		after = props.after && (
 			<div className='element-action after'>{props.after}</div>
@@ -32,10 +33,8 @@ const Input = React.forwardRef((props,ref) => {
 			<div className='ez-input-overlay'>{props.overlay}</div>
 		);
 	
-	
 	const effect = isValidEffect(props.effect);
 
-	
 	const clickHandler = (e) => {
 		if(typeof props.containerOnClick === "function") {
 			return props.containerOnClick(e);
@@ -74,7 +73,6 @@ const Input = React.forwardRef((props,ref) => {
 			class: 'input-file',
 			noBefore: true,
 			noAfter: true,
-			before: () => (<div className='input-mask'></div>),
 			after: () => (props.children)
 		},
 		text: {
@@ -130,29 +128,6 @@ const Input = React.forwardRef((props,ref) => {
 		};
 	}
 
-	const className = classNames(
-		'ez-input-element',
-		element.class,
-		effect,
-		props.containerClassName,
-		mainClasses(props),
-		{
-			'action-hidden': props.actionHidden,
-			'input-action': props.before || props.after,
-			'box-shadow': props.boxShadow,
-			'hasOverlay': overlay,
-			'noOverlayOverflow': props.noOverlayOverflow,
-			'incomplete': props.dot || props.incomplete //Checkbox
-		}
-	);
-
-	const inputClassName = classNames(
-		"ez-input",
-		props.className,
-		mainClasses(props)
-	);
-	
-
 	const needContainer = (
 		props.container ||
 		element.before ||
@@ -161,6 +136,31 @@ const Input = React.forwardRef((props,ref) => {
 		before ||
 		after ||
 		icon
+	);
+
+	const hasLabel = (props.label || props.description);
+
+	const className = classNames(
+		'ez-input-element',
+		element.class,
+		effect,
+		props.wrapperClassName,
+		!hasLabel && props.containerClassName,
+		mainClasses(props),
+		{
+			'action-hidden': props.actionHidden,
+			'input-action': props.before || props.after,
+			'box-shadow': props.boxShadow,
+			'hasOverlay': overlay,
+			'noOverlayOverflow': props.noOverlayOverflow,
+			'incomplete': props.dot || props.incomplete, //Checkbox
+		}
+	);
+
+	const inputClassName = classNames(
+		"ez-input",
+		props.className,
+		mainClasses(props)
 	);
 
 	const inputContainer = needContainer ?
@@ -196,115 +196,116 @@ const Input = React.forwardRef((props,ref) => {
 			ref={handleRef}
 			className={inputClassName}
 		/>;
+	
+	const labelContainer = hasLabel ? (
+		<Label {...props} className={props.containerClassName}>
+			{inputContainer}
+		</Label>
+	) : inputContainer;
 
-	return inputContainer;
+	return labelContainer;
 });
 
-Input.List = Input.Multi = function(props){ //eslint-disable-line
-
-	const initalItems = Array.isArray(props.defaultValue) ? props.defaultValue : [];
+Input.List = Input.Multi = function (props) { //eslint-disable-line
 	
-	const itemReducer = function(state,action){
-		switch(action.type){
-			case "add":
-				return [action.item].concat(state)
-			case "delete":
-				return state.filter(item => item !== action.item);
-			default:
-				throw new Error();
-		}
-	}
-	var inputProps = props.inputProps || {};
-
-	const [items,setItems] = useReducer(itemReducer,initalItems); //eslint-disable-line
-
-	const itemsCurrent = Array.isArray(props.value) ? props.value : items;
-
+	const [items, setItems] = useController(props, "value", [], "onChange");
+	
 	const inputRef = useRef(null); //eslint-disable-line
 
-	const max = isNaN(props.max) ? 50 : parseInt(props.max);
-	const min = isNaN(props.min) ? 0  : parseInt(props.min);
-	const duplicates = props.duplicates;
+	const max = isNaN(props.max) ? 50 : parseInt(props.max),
+		min = isNaN(props.min) ? 0 : parseInt(props.min),
+		duplicate = props.duplicate;
 
-	//eslint-disable-next-line
-	useEffect(()=>{
-		if(triggerEvent("onChange",itemsCurrent));
-	},[itemsCurrent]);
-
-
-	const triggerEvent = (name,value)=>{
-		if(typeof props[name] === "function"){
-			if(props[name](value) === false){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	const addItem = ()=>{
+	const handleAdd = () => {
 		if(!inputRef.current || !inputRef.current.value){
 			return false;
 		}
+
+		if(items.length == max){
+			return false;
+		}
+
 		const value = inputRef.current.value;
-		if(itemsCurrent.length == max){
-			return false;
-		}
-		if(!duplicates && ~itemsCurrent.indexOf(value)){
-			return false;
-		}
-		if(!triggerEvent("onAdd",value)){
+
+		if(!duplicate && ~items.indexOf(value)){
 			return false;
 		}
 		
-		setItems({
-			type: 'add',
-			item: value
-		})
-		inputRef.current.value = "";
+		return setItems(
+			[value].concat(items)
+		);
 	}
 
-	const deleteItem = (item)=>{
-		if(!inputRef.current){
+	const handleRemove = (removeItem)=>{
+		if(!inputRef.current || !inputRef.current.value){
 			return false;
 		}
-		if(itemsCurrent.length == min){
-			return false;
-		}
-		if(!triggerEvent("onDelete",item)){
-			return false;
-		}
-		setItems({
-			type: 'delete',
-			item: item
-		})
 
+		if(items.length == min){
+			return false;
+		}
+
+		return setItems(
+			items.filter(item => item !== removeItem)
+		);
 	}
 
-	const itemElements = itemsCurrent.map((item,i)=>{
+	const renderItems = items.map((item,i)=>{
 		return (
 			<div key={i} className='multi-item'>
 				<span className='multi-item-text'>{item}</span>
 				<div className='multi-item-actions'>
-					<Icon className={props.iconClassName} name='close' onClick={deleteItem.bind(null,item)}></Icon>
+					<Icon
+						className={props.iconClassName}
+						name='close'
+						onClick={() => (
+							handleRemove(item)
+						)}
+					/>
 				</div>
 			</div>
 		)
 	});
 
+	const className = classNames(
+		'ez-multi-input',
+		props.className,
+		{
+			'full': props.full
+		}
+	);
+
 	return (
-		<div className={'ez-multi-input' + (props.className ? ` ${props.className}` : '')}>
-			<Input {...inputProps} type='text' 
+		<div className={className}>
+			<Input
+				{
+				...filterProps(props,
+					['value', 'onChange', 'defaultValue', 'max', 'min', 'duplicate'],
+					true
+				)
+				}
+				type='text'
 				ref={inputRef}
 				after={
-					<Icon className={props.iconClassName} name={props.icon || 'add-to-list'} onClick={addItem}></Icon>
+					<Icon
+						className={props.iconClassName}
+						name={props.icon || 'add-to-list'}
+						onClick={() => (
+							handleAdd()
+						)}
+					/>
 				}
-			>
-			</Input>
+				onKeyUp={(e) => {
+					if(e.keyCode === 13) {
+						handleAdd();
+					}
+				}}
+			/>
 			<div className='multi-items'>
-				{itemElements}
+				{renderItems}
 			</div>
 		</div>
-	)
+	);
 }
 
 Input.Number = React.forwardRef((props, ref) => { //eslint-disable-line
@@ -514,15 +515,18 @@ Input.Number = React.forwardRef((props, ref) => { //eslint-disable-line
 		"input-number",
 	);
 
-	const passProps = filterProps(props, ["className","value", "setValue", "ref", "before", "after", "onChange", "onNumber"]);
-
+	const passProps = filterProps(props, [
+		"className", "value", "setValue", "ref", "before", "after", "onChange", "onNumber"
+	]);
 
 	return (
 		<Input
 			{...passProps}
-			containerClassName={containerClassName}
+			wrapperClassName={containerClassName}
 			className={className}
 			placeholder={options.min}
+			label={props.label}
+			description={props.description}
 			value={value}
 			type='text'
 			inputMode="numeric"
@@ -535,7 +539,7 @@ Input.Number = React.forwardRef((props, ref) => { //eslint-disable-line
 			before={minus}
 			after={plus}
 		/>
-	)
+	);
 });
 
 Input.Group = Group;

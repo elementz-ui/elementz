@@ -12,7 +12,7 @@
 }
 
 .readonly, *[readonly] {
-    background: var(--black-x-light);
+    background: rgba(var(--text-code), 0.05);
 }  
 
 .disabled, *[disabled] {
@@ -137,7 +137,6 @@ small {
 .flex{
     display: flex;
     &.center{
-        align-items: center;
         justify-content: center;
     }
     &.start{
@@ -149,7 +148,44 @@ small {
     &.stretch{
         justify-content: stretch;
     }
+    &.vertical{
+        flex-direction: column;
+    }
+    &.middle{
+        align-items: center;
+    }
+    &.bottom{
+        align-items: flex-end;
+    }
+    &.top{
+        align-items: flex-start;
+    }
 }
+.upload-overlay{
+    position: relative;
+    overflow:hidden;
+    &:after{
+        content: "\ea7c";
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #fff;
+        font-family: zwicon !important;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgb(0,0,0,0.7);
+        opacity: 0;
+        transition: opacity .2s;
+    }
+    &:hover:after {
+       opacity: 1;
+    }
+}
+
+
 img.cover{
     object-fit: cover;
     width: 100%;
@@ -248,8 +284,8 @@ img.cover{
 .row {
     display: flex;
     flex-wrap: wrap;
-    margin-right: calc(var(--box-spacing) * -1,-15px);
-    margin-left: calc(var(--box-spacing) * -1,-15px);
+    margin-right: calc((var(--box-spacing,15px) / 2) * -1);
+    margin-left: calc((var(--box-spacing,15px) / 2) * -1);
     &.nm {
         margin-right: unset;
         margin-left: unset;
@@ -282,10 +318,10 @@ img.cover{
   .col-xl-auto {
     position: relative;
     width: 100%;
-    padding-right: calc(var(--box-spacing,30px) / 2);
-    padding-left:  calc(var(--box-spacing,30px) / 2);
+    padding-right: calc(var(--box-spacing,15px) / 2);
+    padding-left:  calc(var(--box-spacing,15px) / 2);
     .ez-box{
-        margin-bottom: var(--box-spacing, 30px);
+        margin-bottom: var(--box-spacing,15px);
     }
 }
 
@@ -498,16 +534,25 @@ img.cover{
  */
 
 $sizes: sm, md, lg, xl;
-$colors: primary, secondary, info, warning,danger,success,pink,indigo,purple,cyan,orange, yellow, green, black, grey, white;
+$colors: primary, secondary, info, warning,danger,success,pink,indigo,purple,cyan,blue, orange, yellow, green, black, grey, white;
 
 .ez-text{
     color: var(--text) !important;
+    small, span, code {
+        color: var(--text-light) !important;
+    }
 }
 .ez-text-light{
     color: var(--text-light) !important;
+    small, span, code {
+        color: var(--text-light) !important;
+    }
 }
 .ez-text-x-light{
     color: var(--text-x-light) !important;
+    small, span, code {
+        color: var(--text-light) !important;
+    }
 }
 
 .ez-bg{
@@ -714,19 +759,19 @@ $margins: (
 }
 
 .p-b{
-    padding: calc(var(--box-spacing,30px) / 2) !important;
+    padding: var(--box-spacing,15px) !important;
 }
 .pl-b{
-    padding-left: calc(var(--box-spacing,30px) / 2) !important;
+    padding-left: var(--box-spacing,15px) !important;
 }
 .pr-b{
-    padding-right: calc(var(--box-spacing,30px) / 2) !important;
+    padding-right: var(--box-spacing,15px) !important;
 }
 .pt-b{
-    padding-top: calc(var(--box-spacing,30px) / 2) !important;
+    padding-top: var(--box-spacing,15px) !important;
 }
 .pb-b{
-    padding-bottom: calc(var(--box-spacing,30px) / 2) !important;
+    padding-bottom: var(--box-spacing,15px) !important;
 }
 
 .mw-35{

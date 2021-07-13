@@ -385,7 +385,7 @@ const Table = React.forwardRef((props, ref) => {
 
 	const firstRender = useRef(true);
 
-	const [mobile, setMobile] = useState(window.innerWidth <= 1080);
+	const [mobile, setMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= 1080 : false);
 
 	const [rowHeights, setRowHeights] = useState({
 		items: {},
@@ -1019,14 +1019,16 @@ const Table = React.forwardRef((props, ref) => {
 		return setSelected(updateSelected, onChangeParams);
 	}
 
-	const handleRowExpand = function (row, originalIndex, customIndex, e) {
+	const handleRowExpand = async function (row, originalIndex, customIndex, e) {
 		var expandedContent = typeof options.onExpand === "function" ?
 			options.onExpand(filtered_indexed[customIndex], originalIndex, !expanded[customIndex]) :
 			"Nothing to see here";
 
+		var getExpandedContent = await Promise.resolve(expandedContent); //Support async functions
+		
 		var updateExpanded = !expanded[customIndex] ? {
 			...expanded,
-			[customIndex]: expandedContent
+			[customIndex]: getExpandedContent
 		} : {
 				...expanded,
 				[customIndex]: undefined

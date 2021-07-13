@@ -5,8 +5,15 @@ Input elements have similar syntax to native HTML elements
 import {Input} from 'elementz';
 
 <Input.Group space>
-	<Input placeholder='Just a text input'/>
-	<Input type='password' placeholder='Just a password input'/>
+	<Input 
+		placeholder='Just a text input' 
+		label='Text'
+	/>
+	<Input 
+		type='password' 
+		placeholder='Just a password input' 
+		label='Password'
+	/>
 </Input.Group>
 ```
 
@@ -17,8 +24,14 @@ I challenge you to type any character other than a number
 import {Input, Badge} from 'elementz';
 <>
 	
-	<Input type='number' incremental={1} max={100} onChange={console.log.bind(null,"Change number:")} />
-	<small>Try scrolling on it</small>
+	<Input 
+		type='number' 
+		incremental={1} 
+		max={100} 
+		onChange={console.log.bind(null,"Change number:")}
+		description='Try scrolling on it'
+	/>
+	
 
 	<Input.Group className='mt-20'>
 		<Input type='number' sm noButtons incremental={1} max={100}/>
@@ -62,8 +75,7 @@ import {copy} from '../src/Functions/Functions';
 const [show, setShow] = useState(false);
 
 <Input 
-	active
-	readonly
+	readOnly
 	full
 	spellCheck={false}
 	after={<Icon name='copy' />}
@@ -72,7 +84,7 @@ const [show, setShow] = useState(false);
 	value={"bc1qte5dj2g04pzefxcwxu4gxvu83mmf5qsucnpl0n"}	
 	overlay={
 		show ? (
-			<div className='ez-bg-primary ez-animation-pop flex center ez-text-white w-100 h-100'>
+			<div className='ez-bg-primary ez-animation-pop flex center middle ez-text-white w-100 h-100'>
 				Copied <Icon name='checkmark' />
 			</div>
 		) : null
@@ -90,6 +102,61 @@ const [show, setShow] = useState(false);
 
 ```
 
+### Upload
+Make custom file uploaders by simply wrapping them
+
+```js
+import {Badge} from 'elementz';
+import React,{useState} from 'react';
+
+const [image, setImage] = useState('https://i.imgur.com/sw9mJQo.png');
+const [path, setPath] = useState('');
+
+<Input.Group space>
+
+	<Input
+		type='file'
+		accept="image/png, image/gif, image/jpeg"
+		onChange={(e)=>{
+			const files = e.target.files;
+	    	if (FileReader && files && files.length) {
+	    	    var reader = new FileReader();
+	    	    reader.onload = function () {
+	    	        setImage(reader.result);
+	    	    }
+	    	    reader.readAsDataURL(files[0]);
+	    	}
+		}}>
+		<Badge 
+			circle 
+			className='upload-overlay'
+			xl>
+			<img 
+				src={image}
+				className='w-100'
+			/>
+		</Badge>
+	</Input>
+
+	<Input 
+		type='file' 
+		onChange={(e)=>(
+			setPath(e.target.value)
+		)}>
+		<Input.Group>
+			<Input 
+				type='text' 
+				placeholder='Choose a file' 
+				value={path} 
+				className='clickable' 
+				readOnly
+			/>
+			<Badge icon='cloud-upload' />
+		</Input.Group>
+	</Input>
+
+</Input.Group>
+```
 
 
 ### States
@@ -103,39 +170,6 @@ import {Input, Icon, Badge, Button} from 'elementz';
 	<Input defaultValue='A loading input' after={<Icon name='user'/>} disabled loading/>
 	<Input defaultValue='An active input' primary active/>
 </Input.Group>
-```
-
-### Sizes
-
-```js
-
-import {Input, Icon, Badge} from 'elementz';
-
-
-<>
-	<Input.Group space ns>
-		<Input placeholder='Just a text input' sm/>
-		<Input placeholder='Just a text input' md/>
-		<Input placeholder='Just a text input' lg/>
-		<Input placeholder='Just a text input' xl/>
-
-	</Input.Group>
-	<Input.Group space className='mt-5' ns>
-		<Input type='checkbox' sm/>
-		<Input type='checkbox' md disabled/>
-		<Input type='checkbox' lg/>
-		<Input type='checkbox' xl/>
-		<Input type='radio' name='radio' sm/>
-		<Input type='radio' name='radio' md/>
-		<Input type='radio' name='radio' lg/>
-		<Input type='radio' name='radio' xl/>
-
-		<Input.Group full>
-				<Badge primary icon='search'></Badge>
-				<Input active primary full placeholder="A flexible width input"/>
-		</Input.Group>
-	</Input.Group>
-</>
 ```
 
 ### Actions
@@ -207,5 +241,57 @@ const [showPassword, setShowPassword] = useState(false);
 		)}
 	/>
 </Input.Group>
+```
+
+### Sizes
+
+```js
+
+import {Input, Icon, Badge} from 'elementz';
+
+
+<>
+	<Input.Group space ns>
+		<Input placeholder='Just a text input' sm/>
+		<Input placeholder='Just a text input' md/>
+		<Input placeholder='Just a text input' lg/>
+		<Input placeholder='Just a text input' xl/>
+
+	</Input.Group>
+	<Input.Group space className='mt-5' ns>
+		<Input type='checkbox' sm/>
+		<Input type='checkbox' md disabled/>
+		<Input type='checkbox' lg/>
+		<Input type='checkbox' xl/>
+		<Input type='radio' name='radio' sm/>
+		<Input type='radio' name='radio' md/>
+		<Input type='radio' name='radio' lg/>
+		<Input type='radio' name='radio' xl/>
+
+		<Input.Group full>
+				<Badge primary icon='search'></Badge>
+				<Input active primary full placeholder="A flexible width input"/>
+		</Input.Group>
+	</Input.Group>
+</>
+```
+
+
+### Labels
+```js
+<Input 
+	type='text'
+	label='Username'
+	description='The username is required'
+	placeholder='@example'
+	mb
+/>
+
+<Input 
+	type='password'
+	label='Password'
+	description='Your secret password'
+	mb
+/>
 ```
 

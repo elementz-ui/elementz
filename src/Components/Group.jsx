@@ -5,17 +5,20 @@ import "./../Style/Group.scss";
 import PropTypes from 'prop-types';
 
 function Group(props) {
-	const className = classNames('ez-input-group', props.className, {
-		'space': props.space,
-		'vertical': props.vertical,
-		'flex-end': props.end,
-		'flex-start': props.start,
-		'full': props.full,
-		'nw': props.nw || props.noWrap,
-		'ns': props.ns || props.noStretch
-	});
+	const className = classNames('ez-input-group', props.className,
+		{
+			'space': props.space,
+			'vertical': props.vertical,
+			'flex-end': props.end,
+			'flex-start': props.start,
+			'full': props.full,
+			'nw': props.nw || props.noWrap,
+			'ns': props.ns || props.noStretch,
+		},
+		props.col && !isNaN(parseInt(props.col)) && (`ez-group-col-${props.col}`)
+	);
 
-	const passProps = filterProps(props, ['sapce', 'vertical','end','start','full']);
+	const passProps = filterProps(props, ['sapce', 'vertical','end','start','full','col']);
 	return (
 		<div {...passProps} className={className}>
 			{props.children}

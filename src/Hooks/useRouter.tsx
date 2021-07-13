@@ -83,7 +83,7 @@ function useRouter(routes: Map<String,{
 	}
 
 	const runRouteMiddleware = function (name, route, historyMethod, historyState) {
-		var [nextPage, getHistoryMethod, getHistoryState] = routeMiddleware(name, route, routes);
+		var [nextPage, getHistoryMethod, getHistoryState] = routeMiddleware(name, route);
 			
 		var isValidHistoryMethod = ["push", "replace"].includes(getHistoryMethod);
 		historyState = getHistoryState === undefined && getHistoryMethod && !isValidHistoryMethod ? getHistoryMethod : (getHistoryState || historyState);

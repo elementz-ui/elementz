@@ -1,6 +1,6 @@
 import { func } from "prop-types";
 
-export function filterProps (fromProps, extraProps=[]) {
+export function filterProps (fromProps, extraProps=[], onlyCustom=false) {
 	const insideProps = [
 		'icon', 'effect', 'md', 'sm', 'lg', 'xl', 'large', 'small', 'medium',
 		'children', 'active', 'setActive', 'visible', 'isVisible', 'hasIcon',
@@ -12,9 +12,14 @@ export function filterProps (fromProps, extraProps=[]) {
 		'cancel', 'iconClassName', 'arrow', 'border', 'arrowBorder', 'circle', 'reverse', 'gradient',
 		'incomplete', 'dot', 'after', 'before', 'mobileLeft', 'rainbow', 'effect', 'stretch', 'solid',
 		"iconRight", "icon", "onNumber", "noButtons", "container", "incremental", "max", "min", "containerClassName",
-		"nw" ,"nm", "actionHidden", "start", 'mobileLarge', 'noMobile', 'containerOnClick'
+		"nw", "nm", "actionHidden", 'overlay', "start", 'mobileLarge', 'noMobile', 'mb','containerOnClick', 'label', 'description'
 	];
-	const toFilter = [...insideProps, ...extraProps];
+
+	const toFilter = onlyCustom ? extraProps : [
+		...insideProps,
+		...extraProps
+	];
+
 	var filteredProps = {}
 	for (var k in fromProps) {
 		if (toFilter.includes(k) || !fromProps.hasOwnProperty(k)) continue;
@@ -33,6 +38,7 @@ export function mainClasses(props){
 		"info": props.info,
 		'active': props.active,
 		'loading': props.loading,
+		'readonly': props.readOnly,
 		'disabled': props.disabled,
 		'sm': props.sm || props.small,
 		'md': props.md || props.medium,
