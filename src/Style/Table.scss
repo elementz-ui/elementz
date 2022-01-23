@@ -279,7 +279,8 @@
         }   
 
         th, td {
-            padding: var(--sz-lg-padding);
+            //padding: var(--sz-lg-padding);
+            padding: 0px;
             border-bottom: var(--border-width) solid var(--border);
             text-align: left;
         }
